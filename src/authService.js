@@ -1,21 +1,21 @@
-// src/authService.js
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "./firebaseConfig";
+import { auth, db } from "./firebase-config";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { setDoc, doc } from "firebase/firestore";
 
 export const registerUser = async (email, password) => {
-  try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    return userCredential.user;
-  } catch (error) {
-    throw error;
-  }
+  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  const user = userCredential.user;
+  await setDoc(doc(db, "User", user.uid), {
+    email,
+    userID: user.uid,
+  });
+  return user;
 };
 
-export const loginUser = async (email, password) => {
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return userCredential.user;
-  } catch (error) {
-    throw error;
-  }
+export const loginUser = (email, password) => {
+  return signInWithEmailAndPassword(auth, email, password);
+};
+
+export const logoutUser = () => {
+  return signOut(auth);
 };
