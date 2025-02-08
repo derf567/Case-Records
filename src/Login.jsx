@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { loginUser } from "./authService";
 import { useNavigate } from "react-router-dom";
+import React from 'react'; 
+import { Button } from 'primereact/button';
+import './Login.css';
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -19,22 +22,33 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <input
-        type="email"
-        placeholder="Email"
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={handleLogin}>Login</button>
-      <p>Don't have an account?</p>
-      <button onClick={() => navigate("/register")}>Register</button>
+    <div className="login-container">
+      <div className="login-form">
+        
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        <input
+          type="email"
+          placeholder="Email"
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <Button
+          label="Login"
+          onClick={handleLogin}
+          icon="pi pi-sign-in"
+          className="custom-login-button"
+        />
+        <div className="forgot-password-links">
+          <a href="/forgot-password" className="forgot-password-link">Forgot Password?</a>
+        </div>
+        <div className="register-links">
+        <a href="/register" className="register-link">Dont have an account?</a>
+        </div>
+      </div>
     </div>
   );
 };

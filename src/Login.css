@@ -1,93 +1,47 @@
-/* Reset some default browser styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f7fc;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-  }
-  
-  .login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    width: 100%;
-    max-width: 400px;
-    padding: 20px;
-  }
-  
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
 
-  
-  .login-title {
-    display: flex;
-    justify-content: center; /* Center the input */
-    width: 100%; 
-  }
-  
-  .input-group {
-    display: flex;
-    justify-content: center; /* Center the input */
-    margin-bottom: 15px;
-  }
-  
-  .input-group input {
-    width: 350px; /* Adjust this value as needed */
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
-  }
-  
-  .input-group input:focus {
-    outline: none;
-    border-color: #22303E;
-  }
-  
-  .email-input {
-    position: flex;
-    width: 100%;
-  }
+.login-form {
+  background-color: #f5f5f5;
+  padding: 3rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 400px;
+}
 
-  button.login-btn {
-    width: 100%;
-    padding: 12px;
-    background-color: #22303E;
-    color: white;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  button.login-btn:hover {
-    background-color: #45a049;
-  }
-  
-  .error-message {
-    color: red;
-    font-size: 14px;
-    margin-top: 10px;
-  }
-  
-  .login-links {
-    margin-top: 20px;
-    text-align: right;
-  }
-  
-  .login-links a {
-    color: #22303E;
-    text-decoration: none;
-  }
-  
-  .login-links a:hover {
-    text-decoration: underline;
-  }
-  
+.login-form input {
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.custom-login-button {
+  width: 100%;
+  margin-bottom: 1rem;
+  background-color: #3d5b7c;
+  color: #fff;
+}
+
+.login-form a {
+  color: #3d5b7c;
+  text-decoration: none;
+}
+
+.login-form a:hover {
+  text-decoration: underline;
+}
+
+.register-links {
+  text-align: right;
+}
+.forgot-password-links {
+  text-align: right;
+}
