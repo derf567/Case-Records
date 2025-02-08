@@ -5,13 +5,16 @@
   height: 100vh;
 }
 
-.login-form {
-  background-color: #f5f5f5;
-  padding: 3rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  width: 400px;
+.logo{
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.logo img{
+  max-width: 500px;
+  height: auto;
+  object-fit: contain;
 }
 
 .login-form input {
@@ -26,7 +29,7 @@
 .custom-login-button {
   width: 100%;
   margin-bottom: 1rem;
-  background-color: #3d5b7c;
+  background-color: #22303E;
   color: #fff;
 }
 
@@ -42,6 +45,32 @@
 .register-links {
   text-align: right;
 }
-.forgot-password-links {
+.bottom-input {
   text-align: right;
+}
+
+.inputinfo{
+  width: 400px;
+}
+
+.rf-container{
+  display: flex;
+  justify-content: space-between;
+}
+
+.remember{
+  display: flex;
+}
+
+.remember label{
+  margin-left: 8px;
+  white-space: nowrap;
+}
+
+.forgot-password-link{
+  text-align: right;
+}
+
+.register-links{
+  text-align: left;
 }
