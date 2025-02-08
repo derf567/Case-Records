@@ -1,4 +1,4 @@
-import { logoutUser } from "../services/authService";
+import { logoutUser } from "../firebase/authService";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
