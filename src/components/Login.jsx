@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { loginUser } from "../services/authService";
+import { loginUser } from "../firebase/authService";
 import { useNavigate } from "react-router-dom";
 import React from 'react'; 
 import { Button } from 'primereact/button';
 import './css/Login.css';
+import logo_cr from './assets/Logo.png'
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -24,29 +25,46 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-form">
-        
+
+      <div className="logo">
+        <img src={logo_cr} alt="" />
+      </div>
+
         {error && <p style={{ color: 'red' }}>{error}</p>}
+        <div className="input">Email
         <input
           type="email"
           placeholder="Email"
           onChange={(e) => setEmail(e.target.value)}
         />
+        </div>
+        <div className="input">Password
         <input
           type="password"
           placeholder="Password"
           onChange={(e) => setPassword(e.target.value)}
         />
+        </div>
+        <div className="rf-container">
+          <div className="remember">
+            <input type="checkbox"/>
+            <label htmlFor="remember">Remember Me</label>
+          </div>
+
+          <div className="bottom-input">
+            <a href="/forgot-password" className="forgot-password-link">Forgot Password?</a>
+          </div>
+        </div>
+       
+
         <Button
           label="Login"
           onClick={handleLogin}
-          icon="pi pi-sign-in"
           className="custom-login-button"
         />
-        <div className="forgot-password-links">
-          <a href="/forgot-password" className="forgot-password-link">Forgot Password?</a>
-        </div>
+
         <div className="register-links">
-        <a href="/register" className="register-link">Dont have an account?</a>
+        <a href="/register" className="register-link">Create a user account</a>
         </div>
       </div>
     </div>
