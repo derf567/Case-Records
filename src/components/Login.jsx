@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { loginUser } from "./authService";
+import { loginUser } from "../services/authService";
 import { useNavigate } from "react-router-dom";
 import React from 'react'; 
 import { Button } from 'primereact/button';
-import './Login.css';
+import './css/Login.css';
 
 const Login = () => {
   const [email, setEmail] = useState("");

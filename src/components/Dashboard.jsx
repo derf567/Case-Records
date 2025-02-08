@@ -1,4 +1,4 @@
-import { logoutUser } from "./authService";
+import { logoutUser } from "../services/authService";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
