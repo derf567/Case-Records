@@ -32,26 +32,16 @@ const Login = () => {
 
         {error && <p style={{ color: 'red' }}>{error}</p>}
         <div className="input">Email
-        <input
-          type="email"
-          placeholder="Email"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        </div>
-        <div className="input">Password
-        <input
-          type="password"
-          placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        </div>
+        <input type="email" onChange={(e) => setEmail(e.target.value)}/></div>
+        <div className="input">Password<input type="password" onChange={(e) => setPassword(e.target.value)}/></div>
+
         <div className="rf-container">
           <div className="remember">
             <input type="checkbox"/>
             <label htmlFor="remember">Remember Me</label>
-          </div>
+        </div>
 
-          <div className="bottom-input">
+        <div className="bottom-input">
             <a href="/forgot-password" className="forgot-password-link">Forgot Password?</a>
           </div>
         </div>
@@ -60,10 +50,10 @@ const Login = () => {
         <Button
           label="Login"
           onClick={handleLogin}
-          className="custom-login-button"
+          className="login-button"
         />
 
-        <div className="register-links">
+        <div>
         <a href="/register" className="register-link">Create a user account</a>
         </div>
       </div>

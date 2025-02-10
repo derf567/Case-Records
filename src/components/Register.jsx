@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { registerUser } from "../firebase/authService";
 import { useNavigate } from "react-router-dom";
+import { Button } from 'primereact/button';
 import './css/register.css';
+import logo_cr from './assets/Logo.png'
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -18,11 +20,25 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <h2>Register</h2>
-      <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
-      <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
-      <button onClick={handleRegister}>Register</button>
+    <div className = "register-container">
+      <div className="register-form">
+      <div className="logo">
+        <img src={logo_cr} alt="" />
+      </div>
+        <div className = "input">Email<input type="email"  onChange={(e) => setEmail(e.target.value)} /></div>
+        <div className = "input">Password<input type="password" onChange={(e) => setPassword(e.target.value)} /></div>
+        <div className = "input">Confirm Password<input type="password"/></div>
+
+      <Button
+          label="Register"
+          onClick={handleRegister}
+          className="register-button"
+        />
+
+        <div>
+          <a href="/" className="backto-login">Back to Login</a>
+        </div>
+      </div>
     </div>
   );
 };

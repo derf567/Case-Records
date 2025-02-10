@@ -1,4 +1,4 @@
-.login-container {
+.register-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -17,7 +17,7 @@
   object-fit: contain;
 }
 
-.login-form input {
+.register-form input {
   display: block;
   width: 100%;
   margin-bottom: 1rem;
@@ -26,51 +26,13 @@
   border-radius: 4px;
 }
 
-.custom-login-button {
+.register-button {
   width: 100%;
   margin-bottom: 1rem;
   background-color: #22303E;
   color: #fff;
 }
 
-.login-form a {
-  color: #3d5b7c;
-  text-decoration: none;
-}
-
-.login-form a:hover {
-  text-decoration: underline;
-}
-
-.register-links {
+.backto-login {
   text-align: right;
-}
-.bottom-input {
-  text-align: right;
-}
-
-.inputinfo{
-  width: 400px;
-}
-
-.rf-container{
-  display: flex;
-  justify-content: space-between;
-}
-
-.remember{
-  display: flex;
-}
-
-.remember label{
-  margin-left: 8px;
-  white-space: nowrap;
-}
-
-.forgot-password-link{
-  text-align: right;
-}
-
-.register-links{
-  text-align: left;
 }
