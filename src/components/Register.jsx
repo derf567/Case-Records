@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { registerUser } from "../firebase/authService";
 import { useNavigate } from "react-router-dom";
+import './css/register.css';
 
 const Register = () => {
   const [email, setEmail] = useState("");

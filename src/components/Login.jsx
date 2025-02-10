@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { loginUser } from "../firebase/authService";
 import { useNavigate } from "react-router-dom";
-import React from 'react'; 
 import { Button } from 'primereact/button';
-import './css/Login.css';
+import React from 'react'; 
+import './css/login.css';
 import logo_cr from './assets/Logo.png'
 
 const Login = () => {
