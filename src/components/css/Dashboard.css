@@ -1,0 +1,18 @@
+
+.custom-logout-button {
+    background-color: #22303E; /* Red background */
+    color: white;              /* White text */
+    border: none;              /* No border */
+    padding: 10px 20px;       /* Padding */
+    border-radius: 5px;       /* Rounded corners */
+    font-size: 16px;          /* Font size */
+    cursor: pointer;           /* Pointer on hover */
+    width: 8%;
+    margin-top: 720px;
+    margin-left: 20px;
+
+}
+
+.custom-logout-button:hover {
+    background-color: #ff1a1a; /* Darker red on hover */
+}

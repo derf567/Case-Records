@@ -3,7 +3,7 @@ import { loginUser } from "../firebase/authService";
 import { useNavigate } from "react-router-dom";
 import { Button } from 'primereact/button';
 import React from 'react'; 
-import './css/login.css';
+import './css/Login.css';
 import logo_cr from './assets/Logo.png'
 
 const Login = () => {
