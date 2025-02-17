@@ -4,6 +4,8 @@ import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
 import AddCase from "./components/AddCase";
 import CreateCase from './components/CreateCase';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
 
 const App = () => {
   return (
@@ -11,6 +13,8 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgotpassword" element={<ForgotPassword />} />
+        <Route path="/resetpassword" element={<ResetPassword />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/create-case" element={<CreateCase />} />
         <Route path="/AddCase" element={<AddCase />} />

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { registerUser } from "../firebase/authService";
 import { useNavigate } from "react-router-dom";
 import { Button } from 'primereact/button';
-import './css/register.css';
+import './css/Register.css';
 import logo_cr from './assets/Logo.png'
 
 const Register = () => {
