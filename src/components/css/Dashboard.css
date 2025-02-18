@@ -16,3 +16,17 @@
 .custom-logout-button:hover {
     background-color: #ff1a1a; /* Darker red on hover */
 }
+
+.logo-sq{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 0;
+  }
+
+  .logo-sq img{
+    width: 375px;
+    height: auto;
+    display: block;
+    margin-left: 0;
+  }

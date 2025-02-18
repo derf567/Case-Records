@@ -50,7 +50,7 @@ const Login = () => {
     <div className="login-container">
       <div className="login-form">
         <div className="logo">
-          <img src={logo_cr} alt="" />
+          <img src={logo_cr} alt="logo" />
         </div>
 
         {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -78,7 +78,7 @@ const Login = () => {
           </div>
 
           <div className="bottom-input">
-            <a href="/forgot-password" className="forgot-password-link">Forgot Password?</a>
+            <a href="/ForgotPassword" className="forgot-password-link">Forgot Password?</a>
           </div>
         </div>
 

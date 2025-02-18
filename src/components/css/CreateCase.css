@@ -30,3 +30,17 @@
   .p-inputtext, .p-dropdown, .p-calendar {
     width: 100%;
   }
+
+  .logo-sq{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 0;
+  }
+
+  .logo-sq img{
+    width: 375px;
+    height: auto;
+    display: block;
+    margin-left: 0;
+  }

@@ -23,7 +23,7 @@ const Register = () => {
     <div className = "register-container">
       <div className="register-form">
       <div className="logo">
-        <img src={logo_cr} alt="" />
+        <img src={logo_cr} alt="logo" />
       </div>
         <div className = "input">Email<input type="email"  onChange={(e) => setEmail(e.target.value)} /></div>
         <div className = "input">Password<input type="password" onChange={(e) => setPassword(e.target.value)} /></div>

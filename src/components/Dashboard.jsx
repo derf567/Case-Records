@@ -7,6 +7,7 @@ import { Column } from 'primereact/column';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase/firebase-config';
 import './css/Dashboard.css';
+import logo_sq from './assets/LogoSquare.png'
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -41,15 +42,16 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h2>Dashboard</h2>
-
+      <ul className="side">
+        <div className="logo-sq"><img src={logo_sq} alt="logo" /></div>
+      </ul>
       <div className="card" style={{ marginTop: '20px' }}>
-        <DataTable 
-          value={cases} 
-          paginator 
-          rows={15} 
-          rowsPerPageOptions={[5, 10, 15, 50]} 
-          tableStyle={{ minWidth: '50rem' }} 
+        <DataTable
+          value={cases}
+          paginator
+          rows={15}
+          rowsPerPageOptions={[5, 10, 15, 50]}
+          tableStyle={{ minWidth: '50rem' }}
           className="custom-data-table"
         >
           <Column field="title" header="Case Title" style={{ width: '20%' }}></Column>
