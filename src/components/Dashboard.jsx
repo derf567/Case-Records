@@ -45,36 +45,36 @@ const Dashboard = () => {
     navigate("/create-case");
   };
 
-  const getStatusColor = (dueDate) => {
-    if (!dueDate) return 'green';
+  const getStatusColor = (hearingStatus) => {
+    // Convert to lowercase and trim for consistent comparison
+    const status = hearingStatus?.toLowerCase()?.trim();
     
-    const today = new Date();
-    const due = new Date(dueDate);
-    const daysRemaining = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
-
-    if (daysRemaining < 0) return 'red';
-    if (daysRemaining <= 7) return 'yellow';
-    return 'green';
-  };
-
-  const statusBodyTemplate = (rowData) => {
-    const statusColor = getStatusColor(rowData.dueDate);
-    let statusText = '';
-    
-    switch(statusColor) {
-      case 'red':
-        statusText = 'Overdue';
-        break;
-      case 'yellow':
-        statusText = 'Due Soon';
-        break;
-      case 'green':
-        statusText = 'On Track';
-        break;
+    switch(status) {
+      case 'on track':
+        return 'green';
+      case 'completed':
+        return 'green';
+      case 'overdue':
+        return 'red';
+      case 'scheduled':
+        return 'red';
+      case 'due soon':
+        return 'yellow';
+      case 'pending':
+        return 'yellow';
       default:
-        statusText = 'Unknown';
+        return 'yellow'; // Default status
     }
-
+  };
+  const statusBodyTemplate = (rowData) => {
+    // Get status color based on hearing status
+    const statusColor = getStatusColor(rowData.hearing);
+    // Use the actual hearing status as the text
+    const statusText = rowData.hearing || 'Not Set';
+  
+    // For debugging
+    console.log('Hearing Status:', rowData.hearing, 'Color:', statusColor);
+  
     return (
       <div 
         className="status-indicator" 

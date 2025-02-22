@@ -23,9 +23,9 @@ const CreateCase = () => {
   });
 
   const hearingOptions = [
-    { label: 'Pending', value: 'Pending' },
-    { label: 'Completed', value: 'Completed' },
-    { label: 'Scheduled', value: 'Scheduled' }
+    { label: 'Overdue', value: 'Overdue' },
+    { label: 'Due Soon', value: 'Due Soon' },
+    { label: 'On Track', value: 'On Track' }
   ];
 
   const dataFieldOptions = [
