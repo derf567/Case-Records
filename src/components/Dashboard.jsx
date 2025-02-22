@@ -1,19 +1,23 @@
 // Dashboard.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { logoutUser } from "../firebase/authService";
 import { useNavigate } from "react-router-dom";
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase-config';
+import { Toast } from 'primereact/toast';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import './css/Dashboard.css';
-import logo_sq from './assets/LogoSquare.png'
+import logo_sq from './assets/LogoSquare.png';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [cases, setCases] = useState([]);
+  const [selectedCases, setSelectedCases] = useState([]);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const toast = useRef(null);
 
   useEffect(() => {
     const fetchCases = async () => {
@@ -32,7 +36,6 @@ const Dashboard = () => {
     fetchCases();
   }, []);
 
-  
   const handleLogout = async () => {
     await logoutUser();
     navigate("/");
@@ -43,7 +46,7 @@ const Dashboard = () => {
   };
 
   const getStatusColor = (dueDate) => {
-    if (!dueDate) return 'green'; // Default status
+    if (!dueDate) return 'green';
     
     const today = new Date();
     const due = new Date(dueDate);
@@ -83,14 +86,79 @@ const Dashboard = () => {
     );
   };
 
+  const handleEdit = () => {
+    if (selectedCases.length === 1) {
+      navigate(`/edit-case/${selectedCases[0].id}`);
+    } else {
+      toast.current.show({
+        severity: 'warn',
+        summary: 'Warning',
+        detail: 'Please select one case to edit',
+        life: 3000
+      });
+    }
+  };
+
+  const handleDelete = () => {
+    if (selectedCases.length === 0) {
+      toast.current.show({
+        severity: 'warn',
+        summary: 'Warning',
+        detail: 'Please select cases to delete',
+        life: 3000
+      });
+      return;
+    }
+
+    confirmDialog({
+      message: `Are you sure you want to delete ${selectedCases.length} selected case(s)?`,
+      header: 'Confirm Delete',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => deleteSelectedCases()
+    });
+  };
+
+  const deleteSelectedCases = async () => {
+    try {
+      await Promise.all(
+        selectedCases.map(caseItem => 
+          deleteDoc(doc(db, 'CaseFile', caseItem.id))
+        )
+      );
+
+      const updatedCases = cases.filter(
+        caseItem => !selectedCases.some(selected => selected.id === caseItem.id)
+      );
+      setCases(updatedCases);
+      setSelectedCases([]);
+
+      toast.current.show({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Cases deleted successfully',
+        life: 3000
+      });
+    } catch (error) {
+      console.error("Error deleting cases: ", error);
+      toast.current.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to delete cases',
+        life: 3000
+      });
+    }
+  };
+
   return (
     <div className="dashboard-container">
+      <Toast ref={toast} />
+      <ConfirmDialog />
+
       <div className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}>
         <div className="sidebar-header">
           <img src={logo_sq} alt="logo" className="logo-image" />
         </div>
         <div className="sidebar-content">
-          {/* Main Navigation Buttons */}
           <Button
             label="Dashboard"
             icon="pi pi-home"
@@ -109,8 +177,6 @@ const Dashboard = () => {
             onClick={() => navigate('/settings')}
             className="sidebar-button"
           />
-          
-          {/* Logout Button - Remains at bottom */}
           <Button
             label="Logout"
             icon="pi pi-sign-out"
@@ -121,7 +187,6 @@ const Dashboard = () => {
       </div>
 
       <div className="main-content">
-          {/* Add this toolbar section */}
         <div className="documents-header">
           <div className="header-left">
             <h2>Documents</h2>
@@ -131,11 +196,15 @@ const Dashboard = () => {
               icon="pi pi-pencil" 
               className="p-button-text"
               tooltip="Edit"
+              onClick={handleEdit}
+              disabled={selectedCases.length !== 1}
             />
             <Button 
               icon="pi pi-trash" 
               className="p-button-text"
               tooltip="Delete"
+              onClick={handleDelete}
+              disabled={selectedCases.length === 0}
             />
             <Button 
               icon="pi pi-filter" 
@@ -155,26 +224,35 @@ const Dashboard = () => {
             />
           </div>
         </div>
+
         <div className="card">
           <DataTable
             value={cases}
+            selection={selectedCases}
+            onSelectionChange={e => setSelectedCases(e.value)}
+            dataKey="id"
             paginator
             rows={15}
             rowsPerPageOptions={[5, 10, 15, 50]}
             className="custom-data-table"
             responsiveLayout="scroll"
+            selectionMode="multiple"
           >
-              <Column 
-                header="Status" 
-                body={statusBodyTemplate} 
-                style={{ width: '5%', textAlign: 'center' }}
-              />
-            <Column field="title" header="Case Title" style={{ width: '20%' }}></Column>
-            <Column field="caseNumber" header="Case Number" style={{ width: '15%' }}></Column>
-            <Column field="assignedJudge" header="Judge" style={{ width: '15%' }}></Column>
-            <Column field="dataField" header="Type" style={{ width: '15%' }}></Column>
-            <Column field="hearing" header="Hearing Status" style={{ width: '15%' }}></Column>
-            <Column field="nature" header="Nature" style={{ width: '20%' }}></Column>
+            <Column 
+              selectionMode="multiple" 
+              headerStyle={{ width: '3rem' }}
+            />
+            <Column 
+              header="Status" 
+              body={statusBodyTemplate} 
+              style={{ width: '5%', textAlign: 'center' }}
+            />
+            <Column field="title" header="Case Title" style={{ width: '20%' }} />
+            <Column field="caseNumber" header="Case Number" style={{ width: '15%' }} />
+            <Column field="assignedJudge" header="Judge" style={{ width: '15%' }} />
+            <Column field="dataField" header="Type" style={{ width: '15%' }} />
+            <Column field="hearing" header="Hearing Status" style={{ width: '15%' }} />
+            <Column field="nature" header="Nature" style={{ width: '15%' }} />
           </DataTable>
         </div>
       </div>

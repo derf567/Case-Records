@@ -146,9 +146,24 @@
 
 
 
+/* Add to your existing Dashboard.css */
+.p-datatable .p-datatable-tbody > tr.p-highlight {
+  background: rgba(33, 150, 243, 0.1);
+}
 
+.p-datatable .p-checkbox .p-checkbox-box.p-highlight {
+  border-color: #2196F3;
+  background: #2196F3;
+}
 
+.p-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
+.p-toast {
+  z-index: 1000;
+}
 
 
 
