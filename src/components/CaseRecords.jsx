@@ -1,4 +1,3 @@
-// Dashboard.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { logoutUser } from "../firebase/authService";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +11,7 @@ import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import './css/Dashboard.css';
 import logo_sq from './assets/LogoSquare.png';
 
-const Dashboard = () => {
+const CaseRecords = () => {
   const navigate = useNavigate();
   const [cases, setCases] = useState([]);
   const [selectedCases, setSelectedCases] = useState([]);
@@ -260,4 +259,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default CaseRecords;
