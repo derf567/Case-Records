@@ -6,37 +6,24 @@ import { db } from '../firebase/firebase-config';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
-import { Dropdown } from 'primereact/dropdown';
-import { Toast } from 'primereact/toast'; // Import Toast component
+import { Toast } from 'primereact/toast';
 import './css/CreateCase.css';
-import logo_sq from './assets/LogoSquare.png'
+import logo_sq from './assets/LogoSquare.png';
 
 const CreateCase = () => {
   const navigate = useNavigate();
-  const toast = useRef(null); // Create a reference for the Toast component
+  const toast = useRef(null);
   const [caseData, setCaseData] = useState({
-    casenumber: '',
+    civilCaseNo: '',
     title: '',
     nature: '',
-    raffled: '',
-    pretrial: '',
-    initialtrial: '',
-    lastrial: '',
-    datesubmitted: '',
-    judge: '',
+    dateFiledRaffled: null,
+    preTrialPreliminary: null,
+    dateOfInitialTrial: null,
+    lastTrialCourtAction: '',
+    dateSubmittedForDecision: null,
+    judgeAssigned: ''
   });
-
-  const hearingOptions = [
-    { label: 'Overdue', value: 'Overdue' },
-    { label: 'Due Soon', value: 'Due Soon' },
-    { label: 'On Track', value: 'On Track' }
-  ];
-
-  const dataFieldOptions = [
-    { label: 'Criminal', value: 'Criminal' },
-    { label: 'Civil', value: 'Civil' },
-    { label: 'Family', value: 'Family' }
-  ];
 
   const handleInputChange = (e, field) => {
     setCaseData({
@@ -45,35 +32,47 @@ const CreateCase = () => {
     });
   };
 
+  const handleDateChange = (value, field) => {
+    setCaseData({
+      ...caseData,
+      [field]: value
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Format dates for Firestore
+    const formattedData = {
+      ...caseData,
+      dateFiledRaffled: caseData.dateFiledRaffled ? caseData.dateFiledRaffled.toISOString() : null,
+      preTrialPreliminary: caseData.preTrialPreliminary ? caseData.preTrialPreliminary.toISOString() : null,
+      dateOfInitialTrial: caseData.dateOfInitialTrial ? caseData.dateOfInitialTrial.toISOString() : null,
+      dateSubmittedForDecision: caseData.dateSubmittedForDecision ? caseData.dateSubmittedForDecision.toISOString() : null,
+      createdAt: new Date().toISOString() // Add creation timestamp
+    };
+    
     try {
-      await addDoc(collection(db, 'CaseFile'), {
-        ...caseData,
-        trialDate: caseData.trialDate?.toISOString() || null
-      });
+      await addDoc(collection(db, 'CaseFile'), formattedData);
       
-      // Show success toast message
       toast.current.show({
         severity: 'success',
         summary: 'Success',
-        detail: 'The case has been submitted. Thank you.',
+        detail: 'Civil case has been successfully created.',
         life: 3000
       });
       
-      // Navigate after a short delay to allow the user to see the message
       setTimeout(() => {
-        navigate('/dashboard');
+        navigate('/caserecords');
       }, 2000);
       
     } catch (error) {
       console.error('Error creating case: ', error);
       
-      // Show error toast message
       toast.current.show({
         severity: 'error',
         summary: 'Error',
-        detail: 'Error creating case. Please try again.',
+        detail: 'Failed to create case. Please try again.',
         life: 3000
       });
     }
@@ -81,20 +80,19 @@ const CreateCase = () => {
 
   return (
     <div>
-      {/* Toast component for displaying messages */}
       <Toast ref={toast} position="top-center" />
       
       <ul className="side">
         <div className="logo-sq"><img src={logo_sq} alt="logo" /></div>
       </ul>
       <div className="create-case-container">
-        <h2>Create New Case</h2>
+        <h2>Create New Civil Case</h2>
         <form onSubmit={handleSubmit} className="case-form">
           <div className="form-field">
             <label>CIVIL CASE NO.</label>
             <InputText
-              value={caseData.casenumber}
-              onChange={(e) => handleInputChange(e, 'CIVIL CASE NO.')}
+              value={caseData.civilCaseNo}
+              onChange={(e) => handleInputChange(e, 'civilCaseNo')}
               required
             />
           </div>
@@ -103,7 +101,7 @@ const CreateCase = () => {
             <label>TITLE</label>
             <InputText
               value={caseData.title}
-              onChange={(e) => handleInputChange(e, 'TITLE')}
+              onChange={(e) => handleInputChange(e, 'title')}
               required
             />
           </div>
@@ -112,63 +110,69 @@ const CreateCase = () => {
             <label>NATURE</label>
             <InputText
               value={caseData.nature}
-              onChange={(e) => handleInputChange(e, 'NATURE')}
+              onChange={(e) => handleInputChange(e, 'nature')}
               required
             />
           </div>
 
           <div className="form-field">
-            <label>Date Filed/Raffled</label>
-            <InputText
-              value={caseData.raffled}
-              onChange={(e) => handleInputChange(e, 'Date Filed/Raffled')}
-              required
-            />
-          </div>
-
-          <div className="form-field">
-            <label>Pre-Trial/Preliminary</label>
+            <label>DATE FILED/RAFFLED</label>
             <Calendar
-              value={caseData.pretrial}
-              onChange={(e) => handleInputChange(e, 'Pre-Trial/Preliminary')}
+              value={caseData.dateFiledRaffled}
+              onChange={(e) => handleDateChange(e.value, 'dateFiledRaffled')}
               dateFormat="yy-mm-dd"
+              showIcon
               required
             />
           </div>
 
           <div className="form-field">
-            <label>Date of Initial Trial</label>
-            <InputText
-              value={caseData.initialtrial}
-              onChange={(e) => handleInputChange(e, 'Date of Initial Trial')}
+            <label>PRE-TRIAL/PRELIMINARY</label>
+            <Calendar
+              value={caseData.preTrialPreliminary}
+              onChange={(e) => handleDateChange(e.value, 'preTrialPreliminary')}
+              dateFormat="yy-mm-dd"
+              showIcon
               required
             />
           </div>
 
           <div className="form-field">
-            <label>Last Trial/ Court Action Taken and Date Thereof**</label>
-            <InputText
-              value={caseData.lastrial}
-              onChange={(e) => handleInputChange(e, 'Last Trial/ Court Action Taken and Date Thereof**')}
+            <label>DATE OF INITIAL TRIAL</label>
+            <Calendar
+              value={caseData.dateOfInitialTrial}
+              onChange={(e) => handleDateChange(e.value, 'dateOfInitialTrial')}
+              dateFormat="yy-mm-dd"
+              showIcon
               required
             />
           </div>
 
+          <div className="form-field">
+            <label>LAST TRIAL/COURT ACTION TAKEN AND DATE THEREOF</label>
+            <InputText
+              value={caseData.lastTrialCourtAction}
+              onChange={(e) => handleInputChange(e, 'lastTrialCourtAction')}
+              required
+            />
+          </div>
           
           <div className="form-field">
-            <label>Date Submitted for Decision</label>
-            <InputText
-              value={caseData.datesubmitted}
-              onChange={(e) => handleInputChange(e, 'Date Submitted for Decision')}
+            <label>DATE SUBMITTED FOR DECISION</label>
+            <Calendar
+              value={caseData.dateSubmittedForDecision}
+              onChange={(e) => handleDateChange(e.value, 'dateSubmittedForDecision')}
+              dateFormat="yy-mm-dd"
+              showIcon
               required
             />
           </div>
 
           <div className="form-field">
-            <label>Judge to Whom Case is Assigned***</label>
+            <label>JUDGE TO WHOM CASE IS ASSIGNED</label>
             <InputText
-              value={caseData.judge}
-              onChange={(e) => handleInputChange(e, 'Judge to Whom Case is Assigned***')}
+              value={caseData.judgeAssigned}
+              onChange={(e) => handleInputChange(e, 'judgeAssigned')}
               required
             />
           </div>

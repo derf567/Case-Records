@@ -27,6 +27,7 @@ const CaseRecords = () => {
           ...doc.data()
         }));
         setCases(casesList);
+        console.log("Fetched cases:", casesList); // Debug log to see fetched data
       } catch (error) {
         console.error("Error fetching cases: ", error);
       }
@@ -65,14 +66,12 @@ const CaseRecords = () => {
         return 'yellow'; // Default status
     }
   };
+  
   const statusBodyTemplate = (rowData) => {
     // Get status color based on hearing status
     const statusColor = getStatusColor(rowData.hearing);
     // Use the actual hearing status as the text
     const statusText = rowData.hearing || 'Not Set';
-  
-    // For debugging
-    console.log('Hearing Status:', rowData.hearing, 'Color:', statusColor);
   
     return (
       <div 
@@ -83,6 +82,27 @@ const CaseRecords = () => {
         <span className={`status-dot ${statusColor}`}></span>
       </div>
     );
+  };
+
+  // Date formatter function
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return dateString;
+    }
+  };
+
+  // Template for date columns
+  const dateTemplate = (rowData, field) => {
+    return formatDate(rowData[field]);
   };
 
   const handleEdit = () => {
@@ -188,7 +208,7 @@ const CaseRecords = () => {
       <div className="main-content">
         <div className="documents-header">
           <div className="header-left">
-            <h2>Documents</h2>
+            <h2>Civil Case Records</h2>
           </div>
           <div className="header-actions">
             <Button 
@@ -236,6 +256,7 @@ const CaseRecords = () => {
             className="custom-data-table"
             responsiveLayout="scroll"
             selectionMode="multiple"
+            emptyMessage="No civil cases found"
           >
             <Column 
               selectionMode="multiple" 
@@ -246,15 +267,43 @@ const CaseRecords = () => {
               body={statusBodyTemplate} 
               style={{ width: '5%', textAlign: 'center' }}
             />
-            <Column field="casenumber" header="CIVIL CASE NO." style={{ width: '20%' }} />
-            <Column field="title" header="TITLE" style={{ width: '15%' }} />
-            <Column field="nature" header="NATURE" style={{ width: '15%' }} />
-            <Column field="raffled" header="Date Filed/Raffled" style={{ width: '15%' }} />
-            <Column field="pretrial" header="Pre-Trial/Preliminary" style={{ width: '15%' }} />
-            <Column field="initialtrial" header="Date of Initial Trial" style={{ width: '15%' }} />
-            <Column field="lastrial" header="Last Trial/ Court Action Taken and Date Thereof**" style={{ width: '15%' }} />
-            <Column field="datesubmitted" header="Date Submitted for Decision" style={{ width: '15%' }} />
-            <Column field="judge" header="Judge to Whom Case is Assigned***" style={{ width: '15%' }} />
+            <Column field="civilCaseNo" header="CIVIL CASE NO." style={{ width: '12%' }} />
+            <Column field="title" header="TITLE" style={{ width: '20%' }} />
+            <Column field="nature" header="NATURE" style={{ width: '12%' }} />
+            <Column 
+              field="dateFiledRaffled" 
+              header="DATE FILED/RAFFLED" 
+              body={(rowData) => dateTemplate(rowData, 'dateFiledRaffled')} 
+              style={{ width: '12%' }} 
+            />
+            <Column 
+              field="preTrialPreliminary" 
+              header="PRE-TRIAL/PRELIMINARY" 
+              body={(rowData) => dateTemplate(rowData, 'preTrialPreliminary')} 
+              style={{ width: '12%' }} 
+            />
+            <Column 
+              field="dateOfInitialTrial" 
+              header="INITIAL TRIAL DATE" 
+              body={(rowData) => dateTemplate(rowData, 'dateOfInitialTrial')} 
+              style={{ width: '12%' }} 
+            />
+            <Column 
+              field="lastTrialCourtAction" 
+              header="LAST TRIAL/COURT ACTION" 
+              style={{ width: '15%' }} 
+            />
+            <Column 
+              field="dateSubmittedForDecision" 
+              header="SUBMITTED FOR DECISION" 
+              body={(rowData) => dateTemplate(rowData, 'dateSubmittedForDecision')} 
+              style={{ width: '12%' }} 
+            />
+            <Column 
+              field="judgeAssigned" 
+              header="JUDGE ASSIGNED" 
+              style={{ width: '15%' }} 
+            />
           </DataTable>
         </div>
       </div>
