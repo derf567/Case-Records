@@ -160,7 +160,7 @@ const CreateCase = () => {
             <Button label="Submit" type="submit" className="p-button-success" />
             <Button
               label="Cancel"
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/caserecords')}
               className="p-button-secondary"
               type="button"
             />
