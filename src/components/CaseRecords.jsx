@@ -15,7 +15,7 @@ const CaseRecords = () => {
   const navigate = useNavigate();
   const [cases, setCases] = useState([]);
   const [selectedCases, setSelectedCases] = useState([]);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed] = useState(false);
   const toast = useRef(null);
 
   useEffect(() => {
