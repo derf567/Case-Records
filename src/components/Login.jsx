@@ -26,10 +26,10 @@ const Login = () => {
       
       if (result && result.isAdmin) {
         console.log("Admin login successful");
-        navigate("/dashboard"); // or "/admin-dashboard" when ready
+        navigate("/caserecords"); // or "/admin-dashboard" when ready
       } else {
         console.log("Regular user login successful");
-        navigate("/dashboard");
+        navigate("/caserecords");
       }
     } catch (error) {
       console.error("Login error:", error);
