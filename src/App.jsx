@@ -1,11 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import Dashboard from './components/DashBoard';
 import CaseRecords from "./components/CaseRecords";
-import AddCase from "./components/AddCase";
 import CreateCase from './components/CreateCase';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
+import Settings from './components/Settings';
 
 const App = () => {
   return (
@@ -16,8 +17,9 @@ const App = () => {
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/resetpassword" element={<ResetPassword />} />
         <Route path="/caserecords" element={<CaseRecords />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/create-case" element={<CreateCase />} />
-        <Route path="/AddCase" element={<AddCase />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </Router>
   );

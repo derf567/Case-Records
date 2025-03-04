@@ -8,7 +8,7 @@ import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase-config';
 import { Toast } from 'primereact/toast';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
-import './css/Dashboard.css';
+import './css/CaseRecords.css';
 import logo_sq from './assets/LogoSquare.png';
 
 const CaseRecords = () => {
@@ -167,7 +167,7 @@ const CaseRecords = () => {
           <Button
             label="Case Records"
             icon="pi pi-folder"
-            onClick={() => navigate('/case-records')}
+            onClick={() => navigate('/caserecords')}
             className="sidebar-button"
           />
           <Button
@@ -246,12 +246,15 @@ const CaseRecords = () => {
               body={statusBodyTemplate} 
               style={{ width: '5%', textAlign: 'center' }}
             />
-            <Column field="title" header="Case Title" style={{ width: '20%' }} />
-            <Column field="caseNumber" header="Case Number" style={{ width: '15%' }} />
-            <Column field="assignedJudge" header="Judge" style={{ width: '15%' }} />
-            <Column field="dataField" header="Type" style={{ width: '15%' }} />
-            <Column field="hearing" header="Hearing Status" style={{ width: '15%' }} />
-            <Column field="nature" header="Nature" style={{ width: '15%' }} />
+            <Column field="casenumber" header="CIVIL CASE NO." style={{ width: '20%' }} />
+            <Column field="title" header="TITLE" style={{ width: '15%' }} />
+            <Column field="nature" header="NATURE" style={{ width: '15%' }} />
+            <Column field="raffled" header="Date Filed/Raffled" style={{ width: '15%' }} />
+            <Column field="pretrial" header="Pre-Trial/Preliminary" style={{ width: '15%' }} />
+            <Column field="initialtrial" header="Date of Initial Trial" style={{ width: '15%' }} />
+            <Column field="lastrial" header="Last Trial/ Court Action Taken and Date Thereof**" style={{ width: '15%' }} />
+            <Column field="datesubmitted" header="Date Submitted for Decision" style={{ width: '15%' }} />
+            <Column field="judge" header="Judge to Whom Case is Assigned***" style={{ width: '15%' }} />
           </DataTable>
         </div>
       </div>
