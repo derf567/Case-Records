@@ -41,7 +41,7 @@ const Login = () => {
       } else if (error.code === 'auth/wrong-password') {
         setError("Incorrect password. Please try again.");
       } else {
-        setError("Login failed. Please try again.");
+        setError("Login failed. Invalid username or password. Please try again.");
       }
     }
   };

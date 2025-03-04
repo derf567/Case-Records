@@ -34,7 +34,7 @@ export const loginUser = async (email, password) => {
         }
       }
       
-      console.log("Admin login failed - invalid credentials");
+      console.log("Admin login failed - invalid username or password");
       throw new Error("Invalid admin credentials");
     }
     

@@ -1,5 +1,5 @@
 // CreateCase.jsx
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../firebase/firebase-config';
@@ -7,11 +7,13 @@ import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
 import { Dropdown } from 'primereact/dropdown';
+import { Toast } from 'primereact/toast'; // Import Toast component
 import './css/CreateCase.css';
 import logo_sq from './assets/LogoSquare.png'
 
 const CreateCase = () => {
   const navigate = useNavigate();
+  const toast = useRef(null); // Create a reference for the Toast component
   const [caseData, setCaseData] = useState({
     assignedJudge: '',
     caseNumber: '',
@@ -48,16 +50,38 @@ const CreateCase = () => {
         ...caseData,
         trialDate: caseData.trialDate?.toISOString() || null
       });
-      alert('Case created successfully!');
-      navigate('/dashboard');
+      
+      // Show success toast message
+      toast.current.show({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'The case has been submitted. Thank you.',
+        life: 3000
+      });
+      
+      // Navigate after a short delay to allow the user to see the message
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 2000);
+      
     } catch (error) {
       console.error('Error creating case: ', error);
-      alert('Error creating case');
+      
+      // Show error toast message
+      toast.current.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Error creating case. Please try again.',
+        life: 3000
+      });
     }
   };
 
   return (
     <div>
+      {/* Toast component for displaying messages */}
+      <Toast ref={toast} position="top-center" />
+      
       <ul className="side">
         <div className="logo-sq"><img src={logo_sq} alt="logo" /></div>
       </ul>
