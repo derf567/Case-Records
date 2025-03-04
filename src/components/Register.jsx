@@ -13,7 +13,7 @@ const Register = () => {
   const handleRegister = async () => {
     try {
       await registerUser(email, password);
-      navigate("/dashboard");
+      navigate("/login");
     } catch (error) {
       console.error(error.message);
     }

@@ -13,13 +13,15 @@ import logo_sq from './assets/LogoSquare.png'
 const CreateCase = () => {
   const navigate = useNavigate();
   const [caseData, setCaseData] = useState({
-    assignedJudge: '',
-    caseNumber: '',
-    dataField: '',
-    trialDate: null,
-    hearing: '',
+    casenumber: '',
+    title: '',
     nature: '',
-    title: ''
+    raffled: '',
+    pretrial: '',
+    initialtrial: '',
+    lastrial: '',
+    datesubmitted: '',
+    judge: '',
   });
 
   const hearingOptions = [
@@ -65,69 +67,84 @@ const CreateCase = () => {
         <h2>Create New Case</h2>
         <form onSubmit={handleSubmit} className="case-form">
           <div className="form-field">
-            <label>Title</label>
+            <label>CIVIL CASE NO.</label>
+            <InputText
+              value={caseData.casenumber}
+              onChange={(e) => handleInputChange(e, 'CIVIL CASE NO.')}
+              required
+            />
+          </div>
+
+          <div className="form-field">
+            <label>TITLE</label>
             <InputText
               value={caseData.title}
-              onChange={(e) => handleInputChange(e, 'title')}
+              onChange={(e) => handleInputChange(e, 'TITLE')}
               required
             />
           </div>
 
           <div className="form-field">
-            <label>Case Number</label>
+            <label>NATURE</label>
             <InputText
-              value={caseData.caseNumber}
-              onChange={(e) => handleInputChange(e, 'caseNumber')}
+              value={caseData.nature}
+              onChange={(e) => handleInputChange(e, 'NATURE')}
               required
             />
           </div>
 
           <div className="form-field">
-            <label>Assigned Judge</label>
+            <label>Date Filed/Raffled</label>
             <InputText
-              value={caseData.assignedJudge}
-              onChange={(e) => handleInputChange(e, 'assignedJudge')}
+              value={caseData.raffled}
+              onChange={(e) => handleInputChange(e, 'Date Filed/Raffled')}
               required
             />
           </div>
 
           <div className="form-field">
-            <label>Data Field</label>
-            <Dropdown
-              value={caseData.dataField}
-              options={dataFieldOptions}
-              onChange={(e) => handleInputChange(e, 'dataField')}
-              placeholder="Select Data Field"
-              required
-            />
-          </div>
-
-          <div className="form-field">
-            <label>Trial Date</label>
+            <label>Pre-Trial/Preliminary</label>
             <Calendar
-              value={caseData.trialDate}
-              onChange={(e) => handleInputChange(e, 'trialDate')}
+              value={caseData.pretrial}
+              onChange={(e) => handleInputChange(e, 'Pre-Trial/Preliminary')}
               dateFormat="yy-mm-dd"
               required
             />
           </div>
 
           <div className="form-field">
-            <label>Hearing Status</label>
-            <Dropdown
-              value={caseData.hearing}
-              options={hearingOptions}
-              onChange={(e) => handleInputChange(e, 'hearing')}
-              placeholder="Select Hearing Status"
+            <label>Date of Initial Trial</label>
+            <InputText
+              value={caseData.initialtrial}
+              onChange={(e) => handleInputChange(e, 'Date of Initial Trial')}
               required
             />
           </div>
 
           <div className="form-field">
-            <label>Nature of Case</label>
+            <label>Last Trial/ Court Action Taken and Date Thereof**</label>
             <InputText
-              value={caseData.nature}
-              onChange={(e) => handleInputChange(e, 'nature')}
+              value={caseData.lastrial}
+              onChange={(e) => handleInputChange(e, 'Last Trial/ Court Action Taken and Date Thereof**')}
+              required
+            />
+          </div>
+
+          
+          <div className="form-field">
+            <label>Date Submitted for Decision</label>
+            <InputText
+              value={caseData.datesubmitted}
+              onChange={(e) => handleInputChange(e, 'Date Submitted for Decision')}
+              required
+            />
+          </div>
+
+          <div className="form-field">
+            <label>Judge to Whom Case is Assigned***</label>
+            <InputText
+              value={caseData.judge}
+              onChange={(e) => handleInputChange(e, 'Judge to Whom Case is Assigned***')}
               required
             />
           </div>
@@ -136,7 +153,7 @@ const CreateCase = () => {
             <Button label="Submit" type="submit" className="p-button-success" />
             <Button
               label="Cancel"
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/caserecords')}
               className="p-button-secondary"
               type="button"
             />

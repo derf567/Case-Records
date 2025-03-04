@@ -1,4 +1,4 @@
-February 11, 2025
+February 11, 2025 - Mamaril
 - Added add a case react file
 - Added add a case CSS
 - Added add a case route in App.jsx
@@ -8,7 +8,13 @@ February 11, 2025
 - Formatted Login.jsx
 - Updated Register CSS
 
-February 18, 2025
+February 18, 2025 - Mamaril
 - Added Forgot Password and CSS
 - Added Reset Password and CSS
 - Added Sidebar UI
+
+March 4, 2025 - Mamaril
+- Removed AddCase
+- Edited Create Case Labels
+- Added Dashboard.jsx
+- Added CaseRecords.css
