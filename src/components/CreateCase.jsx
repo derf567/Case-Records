@@ -26,18 +26,6 @@ const CreateCase = () => {
     judge: '',
   });
 
-  const hearingOptions = [
-    { label: 'Overdue', value: 'Overdue' },
-    { label: 'Due Soon', value: 'Due Soon' },
-    { label: 'On Track', value: 'On Track' }
-  ];
-
-  const dataFieldOptions = [
-    { label: 'Criminal', value: 'Criminal' },
-    { label: 'Civil', value: 'Civil' },
-    { label: 'Family', value: 'Family' }
-  ];
-
   const handleInputChange = (e, field) => {
     setCaseData({
       ...caseData,
