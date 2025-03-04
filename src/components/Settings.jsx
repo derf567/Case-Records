@@ -5,7 +5,7 @@ import { logoutUser } from "../firebase/authService";
 import './css/Settings.css';
 import logo_sq from './assets/LogoSquare.png';
 
-const Dashboard = () => {
+const Settings = () => {
     const navigate = useNavigate();
       const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
