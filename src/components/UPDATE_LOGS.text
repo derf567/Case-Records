@@ -19,5 +19,30 @@ March 4, 2025 - Mamaril
 - Edited Case Records Labels
 - Added Dashboard.jsx
 - Added CaseRecords.css
+<<<<<<< HEAD
 - Added Settings.jsx
 - Added Settings.css
+=======
+
+
+February 4, 2025 - Marinay
+- Added Login & Logout
+
+February 11, 2025 - Marinay
+- Added Database
+
+February 18, 2025 - Marinay
+- Added Register Functional
+
+February 03, 2025 - Marinay
+- Added Dashboard
+- Added Login
+- Added Delete
+
+March 4, 2025 - Marinay
+- Added Error Message Login
+- Added Error Message Create Case
+- Added Error MEssage on register
+- Added Aligned UI
+
+>>>>>>> e5d76b274fce13e4fc0920c6906d0737d23bc45f
