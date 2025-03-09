@@ -246,13 +246,13 @@ const CaseRecords = () => {
               body={statusBodyTemplate} 
               style={{ width: '5%', textAlign: 'center' }}
             />
-            <Column field="casenumber" header="CIVIL CASE NO." style={{ width: '20%' }} />
+            <Column field="casenumber" header="CIVIL CASE NO." />
             <Column field="title" header="TITLE" style={{ width: '15%' }} />
             <Column field="nature" header="NATURE" style={{ width: '15%' }} />
             <Column field="raffled" header="Date Filed/Raffled" style={{ width: '15%' }} />
             <Column field="pretrial" header="Pre-Trial/Preliminary" style={{ width: '15%' }} />
             <Column field="initialtrial" header="Date of Initial Trial" style={{ width: '15%' }} />
-            <Column field="lastrial" header="Last Trial/ Court Action Taken and Date Thereof**" style={{ width: '15%' }} />
+            <Column field="lastrial" header="Last Trial/ Court Action Taken and Date Thereof**" style={{ width: '15%' }}/>
             <Column field="datesubmitted" header="Date Submitted for Decision" style={{ width: '15%' }} />
             <Column field="judge" header="Judge to Whom Case is Assigned***" style={{ width: '15%' }} />
           </DataTable>

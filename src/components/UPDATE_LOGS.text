@@ -16,5 +16,8 @@ February 18, 2025 - Mamaril
 March 4, 2025 - Mamaril
 - Removed AddCase
 - Edited Create Case Labels
+- Edited Case Records Labels
 - Added Dashboard.jsx
 - Added CaseRecords.css
+- Added Settings.jsx
+- Added Settings.css
