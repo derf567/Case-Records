@@ -267,7 +267,6 @@ const CaseRecords = () => {
               body={statusBodyTemplate} 
               style={{ width: '5%', textAlign: 'center' }}
             />
-<<<<<<< HEAD
             <Column field="casenumber" header="CIVIL CASE NO." />
             <Column field="title" header="TITLE" style={{ width: '15%' }} />
             <Column field="nature" header="NATURE" style={{ width: '15%' }} />
@@ -277,7 +276,6 @@ const CaseRecords = () => {
             <Column field="lastrial" header="Last Trial/ Court Action Taken and Date Thereof**" style={{ width: '15%' }}/>
             <Column field="datesubmitted" header="Date Submitted for Decision" style={{ width: '15%' }} />
             <Column field="judge" header="Judge to Whom Case is Assigned***" style={{ width: '15%' }} />
-=======
             <Column field="civilCaseNo" header="CIVIL CASE NO." style={{ width: '12%' }} />
             <Column field="title" header="TITLE" style={{ width: '20%' }} />
             <Column field="nature" header="NATURE" style={{ width: '12%' }} />
@@ -315,7 +313,6 @@ const CaseRecords = () => {
               header="JUDGE ASSIGNED" 
               style={{ width: '15%' }} 
             />
->>>>>>> e5d76b274fce13e4fc0920c6906d0737d23bc45f
           </DataTable>
         </div>
       </div>
