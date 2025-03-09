@@ -8,6 +8,7 @@ import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase-config';
 import { Toast } from 'primereact/toast';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+import { OverlayPanel } from 'primereact/overlaypanel';
 import './css/CaseRecords.css';
 import logo_sq from './assets/LogoSquare.png';
 
@@ -16,8 +17,27 @@ const CaseRecords = () => {
   const [cases, setCases] = useState([]);
   const [selectedCases, setSelectedCases] = useState([]);
   const [isSidebarCollapsed] = useState(false);
+  const [reminders, setReminders] = useState([]); // State to hold reminders
   const toast = useRef(null);
+  const op = useRef(null); // Reference for the overlay panel
 
+  // Define the handleLogout function
+  const handleLogout = async () => {
+    try {
+      await logoutUser(); // Call the logout function from authService
+      navigate("/"); // Redirect to the home page or login page after logout
+    } catch (error) {
+      console.error("Error during logout:", error);
+      toast.current.show({
+        severity: 'error',
+        summary: 'Logout Failed',
+        detail: 'An error occurred while logging out. Please try again.',
+        life: 3000,
+      });
+    }
+  };
+
+  // Fetch cases from Firestore
   useEffect(() => {
     const fetchCases = async () => {
       try {
@@ -28,6 +48,9 @@ const CaseRecords = () => {
         }));
         setCases(casesList);
         console.log("Fetched cases:", casesList); // Debug log to see fetched data
+
+        // Check for cases with due dates and show reminders
+        checkDueDates(casesList);
       } catch (error) {
         console.error("Error fetching cases: ", error);
       }
@@ -36,43 +59,41 @@ const CaseRecords = () => {
     fetchCases();
   }, []);
 
-  const handleLogout = async () => {
-    await logoutUser();
-    navigate("/");
+  // Function to check for cases with due dates and show reminders
+  const checkDueDates = (casesList) => {
+    const remindersList = casesList.filter(caseItem => {
+      const daysRemaining = getDaysRemaining(caseItem.preTrialPreliminary);
+      return daysRemaining !== null && daysRemaining <= 3;
+    });
+    setReminders(remindersList); // Store reminders in state
   };
 
-  const handleCreateCase = () => {
-    navigate("/create-case");
+  // Calculate the number of days remaining from the pre-trial date
+  const getDaysRemaining = (preTrialDate) => {
+    if (!preTrialDate) return null; // If no date is set, return null
+    const today = new Date();
+    const preTrial = new Date(preTrialDate);
+    const timeDifference = preTrial.getTime() - today.getTime();
+    const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+    return daysRemaining;
   };
 
-  const getStatusColor = (hearingStatus) => {
-    // Convert to lowercase and trim for consistent comparison
-    const status = hearingStatus?.toLowerCase()?.trim();
-    
-    switch(status) {
-      case 'on track':
-        return 'green';
-      case 'completed':
-        return 'green';
-      case 'overdue':
-        return 'red';
-      case 'scheduled':
-        return 'red';
-      case 'due soon':
-        return 'yellow';
-      case 'pending':
-        return 'yellow';
-      default:
-        return 'yellow'; // Default status
-    }
+  // Determine the status color based on days remaining
+  const getStatusColor = (preTrialDate) => {
+    const daysRemaining = getDaysRemaining(preTrialDate);
+    if (daysRemaining === null) return 'gray'; // If no date is set, return gray
+    if (daysRemaining > 7) return 'green';
+    if (daysRemaining > 3) return 'yellow';
+    if (daysRemaining >= 0) return 'red';
+    return 'gray'; // Default if daysRemaining is negative
   };
-  
+
+  // Status body template for the DataTable
   const statusBodyTemplate = (rowData) => {
-    // Get status color based on hearing status
-    const statusColor = getStatusColor(rowData.hearing);
-    // Use the actual hearing status as the text
-    const statusText = rowData.hearing || 'Not Set';
-  
+    const statusColor = getStatusColor(rowData.preTrialPreliminary);
+    const daysRemaining = getDaysRemaining(rowData.preTrialPreliminary);
+    const statusText = daysRemaining !== null ? `${daysRemaining} days remaining` : 'No date set';
+
     return (
       <div 
         className="status-indicator" 
@@ -168,6 +189,15 @@ const CaseRecords = () => {
     }
   };
 
+  const handleCreateCase = () => {
+    navigate("/create-case");
+  };
+
+  // Function to toggle the reminders overlay panel
+  const toggleReminders = (event) => {
+    op.current.toggle(event);
+  };
+
   return (
     <div className="dashboard-container">
       <Toast ref={toast} />
@@ -211,6 +241,12 @@ const CaseRecords = () => {
             <h2>Civil Case Records</h2>
           </div>
           <div className="header-actions">
+            <Button 
+              icon="pi pi-bell" 
+              className="p-button-text"
+              tooltip="Reminders"
+              onClick={toggleReminders}
+            />
             <Button 
               icon="pi pi-pencil" 
               className="p-button-text"
@@ -267,15 +303,6 @@ const CaseRecords = () => {
               body={statusBodyTemplate} 
               style={{ width: '5%', textAlign: 'center' }}
             />
-            <Column field="casenumber" header="CIVIL CASE NO." />
-            <Column field="title" header="TITLE" style={{ width: '15%' }} />
-            <Column field="nature" header="NATURE" style={{ width: '15%' }} />
-            <Column field="raffled" header="Date Filed/Raffled" style={{ width: '15%' }} />
-            <Column field="pretrial" header="Pre-Trial/Preliminary" style={{ width: '15%' }} />
-            <Column field="initialtrial" header="Date of Initial Trial" style={{ width: '15%' }} />
-            <Column field="lastrial" header="Last Trial/ Court Action Taken and Date Thereof**" style={{ width: '15%' }}/>
-            <Column field="datesubmitted" header="Date Submitted for Decision" style={{ width: '15%' }} />
-            <Column field="judge" header="Judge to Whom Case is Assigned***" style={{ width: '15%' }} />
             <Column field="civilCaseNo" header="CIVIL CASE NO." style={{ width: '12%' }} />
             <Column field="title" header="TITLE" style={{ width: '20%' }} />
             <Column field="nature" header="NATURE" style={{ width: '12%' }} />
@@ -316,6 +343,22 @@ const CaseRecords = () => {
           </DataTable>
         </div>
       </div>
+
+      {/* Reminders Overlay Panel */}
+      <OverlayPanel ref={op} showCloseIcon>
+        <h3>Reminders</h3>
+        {reminders.length > 0 ? (
+          <ul>
+            {reminders.map((reminder, index) => (
+              <li key={index}>
+                <strong>{reminder.title}</strong>: {getDaysRemaining(reminder.preTrialPreliminary)} days remaining
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No reminders found.</p>
+        )}
+      </OverlayPanel>
     </div>
   );
 };

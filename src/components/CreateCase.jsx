@@ -1,4 +1,3 @@
-// CreateCase.jsx
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addDoc, collection } from 'firebase/firestore';
@@ -25,6 +24,19 @@ const CreateCase = () => {
     judgeAssigned: ''
   });
 
+  // Helper function to format timestamp in 12-hour format with AM/PM
+  const getFormattedTimestamp = () => {
+    const now = new Date();
+    const hours = now.getHours() % 12 || 12; // Convert to 12-hour format
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+    const month = (now.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+    const day = now.getDate().toString().padStart(2, '0');
+    const year = now.getFullYear();
+
+    return `${month}/${day}/${year} ${hours}:${minutes} ${ampm}`;
+  };
+
   const handleInputChange = (e, field) => {
     setCaseData({
       ...caseData,
@@ -49,7 +61,7 @@ const CreateCase = () => {
       preTrialPreliminary: caseData.preTrialPreliminary ? caseData.preTrialPreliminary.toISOString() : null,
       dateOfInitialTrial: caseData.dateOfInitialTrial ? caseData.dateOfInitialTrial.toISOString() : null,
       dateSubmittedForDecision: caseData.dateSubmittedForDecision ? caseData.dateSubmittedForDecision.toISOString() : null,
-      createdAt: new Date().toISOString() // Add creation timestamp
+      createdAt: getFormattedTimestamp() // Add creation timestamp in 12-hour format
     };
     
     try {
@@ -79,114 +91,149 @@ const CreateCase = () => {
   };
 
   return (
-    <div>
+    <div className="dashboard-container">
       <Toast ref={toast} position="top-center" />
-      
-      <ul className="side">
-        <div className="logo-sq"><img src={logo_sq} alt="logo" /></div>
-      </ul>
-      <div className="create-case-container">
-        <h2>Create New Civil Case</h2>
-        <form onSubmit={handleSubmit} className="case-form">
-          <div className="form-field">
-            <label>CIVIL CASE NO.</label>
-            <InputText
-              value={caseData.civilCaseNo}
-              onChange={(e) => handleInputChange(e, 'civilCaseNo')}
-              required
-            />
-          </div>
+      <div className={`sidebar`}>
+        <div className="sidebar-header">
+          <img src={logo_sq} alt="logo" className="logo-image" />
+        </div>
+        <div className="sidebar-content">
+          <Button
+            label="Dashboard"
+            icon="pi pi-home"
+            onClick={() => navigate('/dashboard')}
+            className="sidebar-button"
+          />
+          <Button
+            label="Case Records"
+            icon="pi pi-folder"
+            onClick={() => navigate('/caserecords')}
+            className="sidebar-button"
+          />
+          <Button
+            label="Settings"
+            icon="pi pi-cog"
+            onClick={() => navigate('/settings')}
+            className="sidebar-button"
+          />
+          <Button
+            label="Logout"
+            icon="pi pi-sign-out"
+            onClick={() => navigate('/')}
+            className="sidebar-button logout-button"
+          />
+        </div>
+      </div>
 
-          <div className="form-field">
-            <label>TITLE</label>
-            <InputText
-              value={caseData.title}
-              onChange={(e) => handleInputChange(e, 'title')}
-              required
-            />
+      <div className="main-content">
+        <div className="documents-header">
+          <div className="header-left">
+            <h2>Create New Civil Case</h2>
           </div>
+        </div>
 
-          <div className="form-field">
-            <label>NATURE</label>
-            <InputText
-              value={caseData.nature}
-              onChange={(e) => handleInputChange(e, 'nature')}
-              required
-            />
-          </div>
+        <div className="card">
+          <form onSubmit={handleSubmit} className="case-form">
+            <div className="form-field">
+              <label>CIVIL CASE NO.</label>
+              <InputText
+                value={caseData.civilCaseNo}
+                onChange={(e) => handleInputChange(e, 'civilCaseNo')}
+                required
+              />
+            </div>
 
-          <div className="form-field">
-            <label>DATE FILED/RAFFLED</label>
-            <Calendar
-              value={caseData.dateFiledRaffled}
-              onChange={(e) => handleDateChange(e.value, 'dateFiledRaffled')}
-              dateFormat="yy-mm-dd"
-              showIcon
-              required
-            />
-          </div>
+            <div className="form-field">
+              <label>TITLE</label>
+              <InputText
+                value={caseData.title}
+                onChange={(e) => handleInputChange(e, 'title')}
+                required
+              />
+            </div>
 
-          <div className="form-field">
-            <label>PRE-TRIAL/PRELIMINARY</label>
-            <Calendar
-              value={caseData.preTrialPreliminary}
-              onChange={(e) => handleDateChange(e.value, 'preTrialPreliminary')}
-              dateFormat="yy-mm-dd"
-              showIcon
-              required
-            />
-          </div>
+            <div className="form-field">
+              <label>NATURE</label>
+              <InputText
+                value={caseData.nature}
+                onChange={(e) => handleInputChange(e, 'nature')}
+                required
+              />
+            </div>
 
-          <div className="form-field">
-            <label>DATE OF INITIAL TRIAL</label>
-            <Calendar
-              value={caseData.dateOfInitialTrial}
-              onChange={(e) => handleDateChange(e.value, 'dateOfInitialTrial')}
-              dateFormat="yy-mm-dd"
-              showIcon
-              required
-            />
-          </div>
+            <div className="form-field">
+              <label>DATE FILED/RAFFLED</label>
+              <Calendar
+                value={caseData.dateFiledRaffled}
+                onChange={(e) => handleDateChange(e.value, 'dateFiledRaffled')}
+                dateFormat="yy-mm-dd"
+                showIcon
+                required
+              />
+            </div>
 
-          <div className="form-field">
-            <label>LAST TRIAL/COURT ACTION TAKEN AND DATE THEREOF</label>
-            <InputText
-              value={caseData.lastTrialCourtAction}
-              onChange={(e) => handleInputChange(e, 'lastTrialCourtAction')}
-              required
-            />
-          </div>
-          
-          <div className="form-field">
-            <label>DATE SUBMITTED FOR DECISION</label>
-            <Calendar
-              value={caseData.dateSubmittedForDecision}
-              onChange={(e) => handleDateChange(e.value, 'dateSubmittedForDecision')}
-              dateFormat="yy-mm-dd"
-              showIcon
-              required
-            />
-          </div>
+            <div className="form-field">
+              <label>PRE-TRIAL/PRELIMINARY</label>
+              <Calendar
+                value={caseData.preTrialPreliminary}
+                onChange={(e) => handleDateChange(e.value, 'preTrialPreliminary')}
+                dateFormat="yy-mm-dd"
+                showIcon
+                required
+              />
+            </div>
 
-          <div className="form-field">
-            <label>JUDGE TO WHOM CASE IS ASSIGNED</label>
-            <InputText
-              value={caseData.judgeAssigned}
-              onChange={(e) => handleInputChange(e, 'judgeAssigned')}
-              required
-            />
-          </div>
+            <div className="form-field">
+              <label>DATE OF INITIAL TRIAL</label>
+              <Calendar
+                value={caseData.dateOfInitialTrial}
+                onChange={(e) => handleDateChange(e.value, 'dateOfInitialTrial')}
+                dateFormat="yy-mm-dd"
+                showIcon
+                required
+              />
+            </div>
 
-          <div className="button-container">
-            <Button label="Submit" type="submit" className="p-button-success" />
-            <Button
-              label="Cancel"
-              onClick={() => navigate('/caserecords')}
-              className="p-button-secondary"
-              type="button"
-            />
-          </div>
-        </form>
+            <div className="form-field">
+              <label>LAST TRIAL/COURT ACTION TAKEN AND DATE THEREOF</label>
+              <InputText
+                value={caseData.lastTrialCourtAction}
+                onChange={(e) => handleInputChange(e, 'lastTrialCourtAction')}
+                required
+              />
+            </div>
+            
+            <div className="form-field">
+              <label>DATE SUBMITTED FOR DECISION</label>
+              <Calendar
+                value={caseData.dateSubmittedForDecision}
+                onChange={(e) => handleDateChange(e.value, 'dateSubmittedForDecision')}
+                dateFormat="yy-mm-dd"
+                showIcon
+                required
+              />
+            </div>
+
+            <div className="form-field">
+              <label>JUDGE TO WHOM CASE IS ASSIGNED</label>
+              <InputText
+                value={caseData.judgeAssigned}
+                onChange={(e) => handleInputChange(e, 'judgeAssigned')}
+                required
+              />
+            </div>
+
+            <div className="button-container">
+              <Button label="Submit" type="submit" className="p-button-success" />
+              <Button
+                label="Cancel"
+                onClick={() => navigate('/caserecords')}
+                className="p-button-secondary"
+                type="button"
+              />
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
