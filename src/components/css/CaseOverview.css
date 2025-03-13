@@ -1,0 +1,100 @@
+/* CreateCase.css */
+.create-case-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.case-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-field label {
+  font-weight: bold;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.p-inputtext, .p-dropdown, .p-calendar {
+  width: 100%;
+}
+
+.logo-sq{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-left: 0;
+}
+
+.logo-sq img{
+  width: 375px;
+  height: auto;
+  display: block;
+  margin-left: 0;
+}
+
+.card{
+  margin-top: 10px;
+}
+
+.toprow{
+  display: flex;
+  align-items: center;
+  align-items: flex-start;
+}
+
+.toprow p{
+  margin-right: 10px;
+}
+
+.civil{
+  width: 11.5%;
+}
+
+.title{
+  width: 78%;
+  text-align: center;
+  margin-bottom: 100px;
+}
+
+.date-filed{
+  width: 10%;
+}
+
+.secondrow{
+  display: flex;
+  align-items: flex-start;
+}
+
+.secondrow p{
+  margin-right: 10px;
+}
+
+.judge{
+  width: 15%;
+}
+.nature{
+  width: 100%;
+  text-align: center;
+  margin-bottom: 200px;
+}
+
+.pre{
+  margin-bottom: 90px;
+}
+
+.last-trial{
+  margin-bottom: 300px;
+}

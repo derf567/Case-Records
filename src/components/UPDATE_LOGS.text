@@ -19,11 +19,14 @@ March 4, 2025 - Mamaril
 - Edited Case Records Labels
 - Added Dashboard.jsx
 - Added CaseRecords.css
-<<<<<<< HEAD
 - Added Settings.jsx
 - Added Settings.css
-=======
 
+March 13, 2025 - Mamaril
+- Added Case Overview
+- Added Case Overview css
+- Updated Dashboard
+- Updated App.jsx
 
 February 4, 2025 - Marinay
 - Added Login & Logout
@@ -45,4 +48,3 @@ March 4, 2025 - Marinay
 - Added Error MEssage on register
 - Added Aligned UI
 
->>>>>>> e5d76b274fce13e4fc0920c6906d0737d23bc45f

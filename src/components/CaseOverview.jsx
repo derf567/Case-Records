@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Button } from 'primereact/button';
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../firebase/authService";
-import './css/Dashboard.css';
+import './css/CaseOverview.css';
 import logo_sq from './assets/LogoSquare.png';
+import { Divider } from 'primereact/divider';
 
-const Dashboard = () => {
+
+const CaseOverview = () => {
   const navigate = useNavigate();
   const [isSidebarCollapsed] = useState(false);
 
@@ -51,28 +53,41 @@ const Dashboard = () => {
       <div className="main-content">
         <div className="documents-header">
           <div className="header-left">
-            <h2>Dashboard</h2>
-          </div>
-          <div className="header-actions">
-            {/* Add any dashboard-related actions here */}
+            <Button
+              label="Back"
+              onClick={() => navigate('/caserecords')}
+            />
           </div>
         </div>
 
         <div className="card">
-          <p>less than 7 days left</p>
+          <div className='toprow'>
+            <p className='civil'>Civil Case No.</p>
+            <Divider layout="vertical" />
+            <p className='title'>Title</p>
+            <Divider layout="vertical" />
+            <p className='date-filed'>Date Filed/Raffled</p>
+          </div>
+          <Divider />
+          <div className='secondrow'>
+            <p className='judge'>JUDGE ASSIGNED</p>
+          <Divider layout="vertical" />
+            <p className='nature'>Nature</p>
+            <Divider layout="vertical" />
+            <div className='secondrow-date'>
+              <p className='pre'>PRE-TRIAL/PRELIMINARY</p>
+              <p>INITIAL TRIAL DATE</p>
+            </div>
+          </div>
+          <Divider />
+            <div className='last-trial'>
+              <p>LAST TRIAL/COURT ACTION:</p>
+            </div>
         </div>
-        <div className="card">
-          <p>less than 3 days left</p>
-        </div>
-        <div className="card">
-          <p>0 days left</p>
-        </div>
-        <div className="card">
-          <p>Due</p>
-        </div>
+
       </div>
     </div>
   );
 };
 
-export default Dashboard;
+export default CaseOverview;

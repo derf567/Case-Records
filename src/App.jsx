@@ -7,6 +7,7 @@ import CreateCase from './components/CreateCase';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 import Settings from './components/Settings';
+import CaseOverview from './components/CaseOverview';
 
 const App = () => {
   return (
@@ -16,8 +17,9 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/resetpassword" element={<ResetPassword />} />
-        <Route path="/caserecords" element={<CaseRecords />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/caserecords" element={<CaseRecords />} />
+        <Route path="/caseoverview" element={<CaseOverview />} />
         <Route path="/create-case" element={<CreateCase />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
