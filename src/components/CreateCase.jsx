@@ -6,6 +6,7 @@ import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
 import { Toast } from 'primereact/toast';
+import { Dropdown } from 'primereact/dropdown';
 import './css/CreateCase.css';
 import logo_sq from './assets/LogoSquare.png';
 
@@ -37,12 +38,36 @@ const CreateCase = () => {
     return `${month}/${day}/${year} ${hours}:${minutes} ${ampm}`;
   };
 
+  // for dropdown NATURE
+  const [selectedNature, setSelectedNature] = useState(null);
+    const natures = [
+        { name: 'Accion Publiciana/Ejectment'},
+        { name: 'Quieting of Title/Reconveyance of Property'},
+        { name: "Recovery of Possession, Damages and Attorney's Fees"}
+    ];
+
+ // const natureNames = natures.map(item => item.name);
+
   const handleInputChange = (e, field) => {
     setCaseData({
       ...caseData,
       [field]: e.target.value
     });
   };
+
+    
+  const handleNatureChange = (e, field) => {
+    const selectedIndex = natures.findIndex(item => item.name === e.value.name);
+    const selectedName = natures[selectedIndex]?.name; // Get the name based on index
+
+    setCaseData({
+        ...caseData,
+        [field]: selectedName // Store the name instead of index
+    });
+
+    console.log("Selected Index:", selectedName); // Output: Selected Index: Accion Publiciana/Ejectment
+};
+
 
   const handleDateChange = (value, field) => {
     setCaseData({
@@ -139,7 +164,7 @@ const CreateCase = () => {
               <InputText
                 value={caseData.civilCaseNo}
                 onChange={(e) => handleInputChange(e, 'civilCaseNo')}
-                required
+                //required
               />
             </div>
 
@@ -148,17 +173,19 @@ const CreateCase = () => {
               <InputText
                 value={caseData.title}
                 onChange={(e) => handleInputChange(e, 'title')}
-                required
+                //required
               />
             </div>
 
             <div className="form-field">
-              <label>NATURE</label>
-              <InputText
-                value={caseData.nature}
-                onChange={(e) => handleInputChange(e, 'nature')}
-                required
-              />
+            <label>NATURE</label>
+            <Dropdown 
+            value={selectedNature} 
+              onChange={(e) => {setSelectedNature(e.value);  
+              handleNatureChange(e, 'nature')}} 
+              options={natures} optionLabel="name" 
+              placeholder="Select a Nature" 
+              className="natureofcase" required/>               
             </div>
 
             <div className="form-field">
@@ -168,7 +195,7 @@ const CreateCase = () => {
                 onChange={(e) => handleDateChange(e.value, 'dateFiledRaffled')}
                 dateFormat="yy-mm-dd"
                 showIcon
-                required
+                //required
               />
             </div>
 
@@ -179,7 +206,7 @@ const CreateCase = () => {
                 onChange={(e) => handleDateChange(e.value, 'preTrialPreliminary')}
                 dateFormat="yy-mm-dd"
                 showIcon
-                required
+                //required
               />
             </div>
 
@@ -190,7 +217,7 @@ const CreateCase = () => {
                 onChange={(e) => handleDateChange(e.value, 'dateOfInitialTrial')}
                 dateFormat="yy-mm-dd"
                 showIcon
-                required
+                //required
               />
             </div>
 
@@ -199,7 +226,7 @@ const CreateCase = () => {
               <InputText
                 value={caseData.lastTrialCourtAction}
                 onChange={(e) => handleInputChange(e, 'lastTrialCourtAction')}
-                required
+                //required
               />
             </div>
             
@@ -210,7 +237,7 @@ const CreateCase = () => {
                 onChange={(e) => handleDateChange(e.value, 'dateSubmittedForDecision')}
                 dateFormat="yy-mm-dd"
                 showIcon
-                required
+                //required
               />
             </div>
 
@@ -219,7 +246,7 @@ const CreateCase = () => {
               <InputText
                 value={caseData.judgeAssigned}
                 onChange={(e) => handleInputChange(e, 'judgeAssigned')}
-                required
+                //required
               />
             </div>
 

@@ -8,7 +8,7 @@ import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase-config';
 import { Toast } from 'primereact/toast';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
-import { OverlayPanel } from 'primereact/overlaypanel';
+import { OverlayPanel } from 'primereact/overlaypanel';      
 import './css/CaseRecords.css';
 import logo_sq from './assets/LogoSquare.png';
 
