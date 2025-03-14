@@ -8,6 +8,7 @@ import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 import Settings from './components/Settings';
 import CaseOverview from './components/CaseOverview';
+import CaseOverviewTest from './components/CaseOverviewTest';
 
 const App = () => {
   return (
@@ -20,8 +21,10 @@ const App = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/caserecords" element={<CaseRecords />} />
         <Route path="/caseoverview" element={<CaseOverview />} />
+        <Route path="/caseoverviewtest" element={<CaseOverviewTest />} />
         <Route path="/create-case" element={<CreateCase />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/case-overview/:id" element={<CaseOverview />} />
       </Routes>
     </Router>
   );

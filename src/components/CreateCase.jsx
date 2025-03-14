@@ -164,7 +164,7 @@ const CreateCase = () => {
               <InputText
                 value={caseData.civilCaseNo}
                 onChange={(e) => handleInputChange(e, 'civilCaseNo')}
-                //required
+                required
               />
             </div>
 
@@ -173,7 +173,7 @@ const CreateCase = () => {
               <InputText
                 value={caseData.title}
                 onChange={(e) => handleInputChange(e, 'title')}
-                //required
+                required
               />
             </div>
 
@@ -195,7 +195,7 @@ const CreateCase = () => {
                 onChange={(e) => handleDateChange(e.value, 'dateFiledRaffled')}
                 dateFormat="yy-mm-dd"
                 showIcon
-                //required
+                required
               />
             </div>
 
@@ -206,7 +206,7 @@ const CreateCase = () => {
                 onChange={(e) => handleDateChange(e.value, 'preTrialPreliminary')}
                 dateFormat="yy-mm-dd"
                 showIcon
-                //required
+                required
               />
             </div>
 
@@ -217,7 +217,7 @@ const CreateCase = () => {
                 onChange={(e) => handleDateChange(e.value, 'dateOfInitialTrial')}
                 dateFormat="yy-mm-dd"
                 showIcon
-                //required
+                required
               />
             </div>
 
@@ -226,7 +226,7 @@ const CreateCase = () => {
               <InputText
                 value={caseData.lastTrialCourtAction}
                 onChange={(e) => handleInputChange(e, 'lastTrialCourtAction')}
-                //required
+                required
               />
             </div>
             
@@ -237,7 +237,7 @@ const CreateCase = () => {
                 onChange={(e) => handleDateChange(e.value, 'dateSubmittedForDecision')}
                 dateFormat="yy-mm-dd"
                 showIcon
-                //required
+                required
               />
             </div>
 
@@ -246,7 +246,7 @@ const CreateCase = () => {
               <InputText
                 value={caseData.judgeAssigned}
                 onChange={(e) => handleInputChange(e, 'judgeAssigned')}
-                //required
+                required
               />
             </div>
 

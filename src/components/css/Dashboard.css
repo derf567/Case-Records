@@ -1,46 +1,83 @@
-/* CreateCase.css */
-.create-case-container {
-  max-width: 800px;
-  margin: 0 auto;
+/* Dashboard container */
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  background-color: #f8f9fa; /* Light gray background */
+}
+
+/* Sidebar styling */
+.sidebar {
+  width: 250px;
+  background-color: #1d2b36; /* Dark sidebar */
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 20px;
 }
 
-.case-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.sidebar-header {
+  margin-bottom: 20px;
 }
 
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.logo-image {
+  width: 100px;
+  height: auto;
 }
 
-.form-field label {
-  font-weight: bold;
-}
-
-.button-container {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.p-inputtext, .p-dropdown, .p-calendar {
+.sidebar-content {
   width: 100%;
 }
 
-.logo-sq{
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding-left: 0;
+.sidebar-button {
+  width: 100%;
+  margin-bottom: 10px;
+  background-color: transparent;
+  color: white;
+  border: none;
+  text-align: left;
+  padding: 10px 15px;
+  transition: background 0.3s ease;
 }
 
-.logo-sq img{
-  width: 375px;
-  height: auto;
-  display: block;
-  margin-left: 0;
+.sidebar-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.logout-button {
+  margin-top: auto;
+  color: red;
+}
+
+/* Main content */
+.main-content {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.documents-header h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Reminders styling */
+.reminders-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reminder-card {
+  background-color: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 1rem;
+  border-left: 5px solid green;
+}
+
+.reminder-card.urgent {
+  border-left: 5px solid red;
 }

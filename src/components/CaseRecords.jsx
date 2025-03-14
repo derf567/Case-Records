@@ -242,6 +242,14 @@ const CaseRecords = () => {
           </div>
           <div className="header-actions">
             <Button 
+              icon="pi pi-eye" 
+              className="p-button-text"
+              tooltip="View Overview"
+              onClick={() => navigate(`/case-overview/${selectedCases[0].id}`)}
+              disabled={selectedCases.length !== 1}
+            />
+
+            <Button 
               icon="pi pi-bell" 
               className="p-button-text"
               tooltip="Reminders"
