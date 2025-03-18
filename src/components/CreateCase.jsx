@@ -206,7 +206,7 @@ const CreateCase = () => {
                 onChange={(e) => handleDateChange(e.value, 'preTrialPreliminary')}
                 dateFormat="yy-mm-dd"
                 showIcon
-                required
+
               />
             </div>
 
@@ -217,7 +217,7 @@ const CreateCase = () => {
                 onChange={(e) => handleDateChange(e.value, 'dateOfInitialTrial')}
                 dateFormat="yy-mm-dd"
                 showIcon
-                required
+
               />
             </div>
 
@@ -237,7 +237,7 @@ const CreateCase = () => {
                 onChange={(e) => handleDateChange(e.value, 'dateSubmittedForDecision')}
                 dateFormat="yy-mm-dd"
                 showIcon
-                required
+
               />
             </div>
 

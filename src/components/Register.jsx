@@ -29,7 +29,7 @@ const Register = () => {
     try {
       await registerUser(email, password);
       toast.current.show({ severity: 'success', summary: 'Success', detail: 'Registration successful', life: 3000 });
-      navigate("/dashboard"); // Redirect to dashboard after successful registration
+      navigate("/"); // Redirect to dashboard after successful registration
     } catch (error) {
       toast.current.show({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 });
     }

@@ -36,7 +36,40 @@ const CaseRecords = () => {
       });
     }
   };
-
+  
+  useEffect(() => {
+    const fetchCases = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'CaseFile'));
+        const casesList = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setCases(casesList);
+  
+        // Check for due dates and show reminders
+        checkDueDates(casesList);
+      } catch (error) {
+        console.error("Error fetching cases: ", error);
+      }
+    };
+  
+    fetchCases();
+  }, []);
+  
+  useEffect(() => {
+    if (reminders.length > 0) {
+      reminders.forEach(caseItem => {
+        toast.current.show({
+          severity: 'warn',
+          summary: 'Upcoming Case Deadline',
+          detail: `${caseItem.title} - ${getDaysRemaining(caseItem.preTrialPreliminary)} days remaining`,
+          life: 5000
+        });
+      });
+    }
+  }, [reminders]);
+  
   // Fetch cases from Firestore
   useEffect(() => {
     const fetchCases = async () => {

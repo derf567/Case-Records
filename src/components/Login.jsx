@@ -1,59 +1,59 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { loginUser } from "../firebase/authService";
 import { useNavigate } from "react-router-dom";
 import { Button } from 'primereact/button';
+import { Toast } from 'primereact/toast';
 import React from 'react';
 import './css/Login.css';
-import logo_cr from './assets/Logo.png'
+import logo_cr from './assets/Logo.png';
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const toast = useRef(null);
+
+  const showReminder = (message, severity = "warn") => {
+    toast.current.show({ severity, summary: "Reminder", detail: message, life: 3000 });
+  };
 
   const handleLogin = async () => {
     try {
-      console.log("Login attempt with:", { email, password });
-      
-      if (!email || !password) {
-        setError("Please enter both email and password");
+      if (!email) {
+        showReminder("Please enter your email");
         return;
       }
-  
+      if (!password) {
+        showReminder("Please enter your password");
+        return;
+      }
+
       const result = await loginUser(email, password);
-      console.log("Login result:", result);
       
       if (result && result.isAdmin) {
-        console.log("Admin login successful");
-        navigate("/caserecords"); // or "/admin-dashboard" when ready
+        navigate("/caserecords");
       } else {
-        console.log("Regular user login successful");
         navigate("/caserecords");
       }
     } catch (error) {
-      console.error("Login error:", error);
-      
-      if (error.message.includes("admin credentials")) {
-        setError("Invalid admin login. Please check your credentials.");
-      } else if (error.code === 'auth/user-not-found') {
-        setError("User not found. Please check your email.");
+      if (error.code === 'auth/user-not-found') {
+        showReminder("User not found. Please check your email.", "error");
       } else if (error.code === 'auth/wrong-password') {
-        setError("Incorrect password. Please try again.");
+        showReminder("Incorrect password. Please try again.", "error");
       } else {
-        setError("Login failed. Invalid username or password. Please try again.");
+        showReminder("Login failed. Please try again.", "error");
       }
     }
   };
 
   return (
     <div className="login-container">
+      <Toast ref={toast} />
       <div className="login-form">
         <div className="logo">
           <img src={logo_cr} alt="logo" />
         </div>
-
-        {error && <p style={{ color: 'red' }}>{error}</p>}
         <div className="input">Email/Username
           <input 
             type="text" 
@@ -70,24 +70,20 @@ const Login = () => {
             placeholder="Enter password"
           />
         </div>
-
         <div className="rf-container">
           <div className="remember">
-            <input type="checkbox" />
+            <input type="checkbox" id="remember" />
             <label htmlFor="remember">Remember Me</label>
           </div>
-
           <div className="bottom-input">
             <a href="/ForgotPassword" className="forgot-password-link">Forgot Password?</a>
           </div>
         </div>
-
         <Button
           label="Login"
           onClick={handleLogin}
           className="login-button"
         />
-
         <div>
           <a href="/register" className="register-link">Create a user account</a>
         </div>
