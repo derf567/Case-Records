@@ -1,100 +1,85 @@
-/* CreateCase.css */
-.create-case-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+/* Add these styles to CaseOverview.css */
+
+.case-overview-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
 }
 
-.case-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.case-title-section {
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 1rem;
 }
 
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.case-title-section h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  color: #333;
 }
 
-.form-field label {
-  font-weight: bold;
+.case-number {
+  display: block;
+  font-size: 1rem;
+  color: #666;
 }
 
-.button-container {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
+.case-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
 }
 
-.p-inputtext, .p-dropdown, .p-calendar {
-  width: 100%;
+.case-detail-item {
+  margin-bottom: 1rem;
 }
 
-.logo-sq{
+.detail-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.detail-value {
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.case-actions {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
   display: flex;
   justify-content: flex-start;
-  align-items: center;
-  padding-left: 0;
 }
 
-.logo-sq img{
-  width: 375px;
-  height: auto;
-  display: block;
-  margin-left: 0;
-}
-
-.card{
-  margin-top: 10px;
-}
-
-.toprow{
+.loading-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  align-items: flex-start;
+  justify-content: center;
+  height: 100%;
+  color: #666;
 }
 
-.toprow p{
-  margin-right: 10px;
+.loading-container i {
+  margin-bottom: 1rem;
 }
 
-.civil{
-  width: 11.5%;
-}
-
-.title{
-  width: 78%;
-  text-align: center;
-  margin-bottom: 100px;
-}
-
-.date-filed{
-  width: 10%;
-}
-
-.secondrow{
-  display: flex;
-  align-items: flex-start;
-}
-
-.secondrow p{
-  margin-right: 10px;
-}
-
-.judge{
-  width: 15%;
-}
-.nature{
-  width: 100%;
-  text-align: center;
-  margin-bottom: 200px;
-}
-
-.pre{
-  margin-bottom: 90px;
-}
-
-.last-trial{
-  margin-bottom: 300px;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .case-details-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .documents-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .header-actions {
+    margin-top: 1rem;
+  }
 }
