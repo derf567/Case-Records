@@ -5,6 +5,7 @@ import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast'; // Import Toast component
 import './css/Register.css';
 import logo_cr from './assets/Logo.png';
+import { Dialog } from 'primereact/dialog';
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -12,6 +13,7 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const toast = useRef(null); // Create a reference for the Toast component
   const navigate = useNavigate();
+  const [visible, setVisible] = useState(false);
 
   const handleRegister = async () => {
     // Check if email is empty
@@ -29,7 +31,8 @@ const Register = () => {
     try {
       await registerUser(email, password);
       toast.current.show({ severity: 'success', summary: 'Success', detail: 'Registration successful', life: 3000 });
-      navigate("/"); // Redirect to dashboard after successful registration
+      setVisible(true);      
+      setTimeout(() => {navigate("/");}, 3000) // Redirect to login after successful registration
     } catch (error) {
       toast.current.show({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 });
     }
@@ -70,6 +73,14 @@ const Register = () => {
           />
         </div>
         <Button label="Register" onClick={handleRegister} className="register-button" />
+        <Dialog header="Success" 
+          visible={visible} 
+          style={{ width: '50vw' }} 
+          onHide={() => setVisible(false)}>
+                <p className="dialog-success">
+                    Register Successfully!
+                </p>
+            </Dialog>
         <div>
           <a href="/" className="backto-login">Back to Login</a>
         </div>

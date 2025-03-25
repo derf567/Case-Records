@@ -36,3 +36,7 @@
 .backto-login {
   text-align: right;
 }
+
+.dialog-success{
+  font-size: 30px;
+}
