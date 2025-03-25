@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../firebase/firebase-config';
@@ -7,12 +7,16 @@ import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
 import { Toast } from 'primereact/toast';
 import { Dropdown } from 'primereact/dropdown';
+import { Avatar } from 'primereact/avatar';
+import { getAuth } from 'firebase/auth';
+import { logoutUser } from '../firebase/authService';
 import './css/CreateCase.css';
-import logo_sq from './assets/LogoSquare.png';
 
 const CreateCase = () => {
   const navigate = useNavigate();
   const toast = useRef(null);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [userName, setUserName] = useState('');
   const [caseData, setCaseData] = useState({
     civilCaseNo: '',
     title: '',
@@ -24,6 +28,34 @@ const CreateCase = () => {
     dateSubmittedForDecision: null,
     judgeAssigned: ''
   });
+
+  // Toggle sidebar function
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
+  // Get current user's information
+  useEffect(() => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    
+    if (user) {
+      // Use displayName if available, otherwise use email or 'User'
+      const displayName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
+      setUserName(displayName);
+    }
+  }, []);
+
+  // Function to get user initials for avatar
+  const getUserInitials = () => {
+    if (!userName) return 'U';
+    
+    const names = userName.split(' ');
+    if (names.length > 1) {
+      return `${names[0][0]}${names[1][0]}`.toUpperCase();
+    }
+    return userName.substring(0, 2).toUpperCase();
+  };
 
   // Helper function to format timestamp in 12-hour format with AM/PM
   const getFormattedTimestamp = () => {
@@ -40,13 +72,11 @@ const CreateCase = () => {
 
   // for dropdown NATURE
   const [selectedNature, setSelectedNature] = useState(null);
-    const natures = [
-        { name: 'Accion Publiciana/Ejectment'},
-        { name: 'Quieting of Title/Reconveyance of Property'},
-        { name: "Recovery of Possession, Damages and Attorney's Fees"}
-    ];
-
- // const natureNames = natures.map(item => item.name);
+  const natures = [
+    { name: 'Accion Publiciana/Ejectment'},
+    { name: 'Quieting of Title/Reconveyance of Property'},
+    { name: "Recovery of Possession, Damages and Attorney's Fees"}
+  ];
 
   const handleInputChange = (e, field) => {
     setCaseData({
@@ -55,25 +85,26 @@ const CreateCase = () => {
     });
   };
 
-    
   const handleNatureChange = (e, field) => {
     const selectedIndex = natures.findIndex(item => item.name === e.value.name);
     const selectedName = natures[selectedIndex]?.name; // Get the name based on index
 
     setCaseData({
-        ...caseData,
-        [field]: selectedName // Store the name instead of index
+      ...caseData,
+      [field]: selectedName // Store the name instead of index
     });
-
-    console.log("Selected Index:", selectedName); // Output: Selected Index: Accion Publiciana/Ejectment
-};
-
+  };
 
   const handleDateChange = (value, field) => {
     setCaseData({
       ...caseData,
       [field]: value
     });
+  };
+
+  const handleLogout = async () => {
+    await logoutUser();
+    navigate('/');
   };
 
   const handleSubmit = async (e) => {
@@ -118,39 +149,72 @@ const CreateCase = () => {
   return (
     <div className="dashboard-container">
       <Toast ref={toast} position="top-center" />
-      <div className={`sidebar`}>
-        <div className="sidebar-header">
-          <img src={logo_sq} alt="logo" className="logo-image" />
+      
+      {/* Sidebar with welcome message and toggle button */}
+      <div className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}>
+        {/* User Welcome Section with Toggle Button */}
+        <div className="user-welcome">
+          <Avatar 
+            label={getUserInitials()} 
+            shape="circle" 
+            className="user-avatar"
+            style={{ backgroundColor: '#2196F3', color: '#ffffff' }}
+          />
+          
+          {!isSidebarCollapsed && (
+            <div className="welcome-text">
+              <span>Welcome,</span>
+              <h3>{userName}</h3>
+            </div>
+          )}
+          
+          <Button 
+            icon={isSidebarCollapsed ? "pi pi-bars" : "pi pi-times"} 
+            className="p-button-rounded p-button-text hamburger-button"
+            onClick={toggleSidebar}
+            aria-label="Toggle Menu"
+          />
         </div>
+        
+        <div className="sidebar-divider"></div>
+        
         <div className="sidebar-content">
           <Button
-            label="Dashboard"
+            label={isSidebarCollapsed ? "" : "Dashboard"}
             icon="pi pi-home"
             onClick={() => navigate('/dashboard')}
             className="sidebar-button"
+            tooltip={isSidebarCollapsed ? "Dashboard" : null}
+            tooltipOptions={isSidebarCollapsed ? { position: 'right' } : null}
           />
           <Button
-            label="Case Records"
+            label={isSidebarCollapsed ? "" : "Case Records"}
             icon="pi pi-folder"
             onClick={() => navigate('/caserecords')}
             className="sidebar-button"
+            tooltip={isSidebarCollapsed ? "Case Records" : null}
+            tooltipOptions={isSidebarCollapsed ? { position: 'right' } : null}
           />
           <Button
-            label="Settings"
+            label={isSidebarCollapsed ? "" : "Settings"}
             icon="pi pi-cog"
             onClick={() => navigate('/settings')}
             className="sidebar-button"
+            tooltip={isSidebarCollapsed ? "Settings" : null}
+            tooltipOptions={isSidebarCollapsed ? { position: 'right' } : null}
           />
           <Button
-            label="Logout"
+            label={isSidebarCollapsed ? "" : "Logout"}
             icon="pi pi-sign-out"
-            onClick={() => navigate('/')}
+            onClick={handleLogout}
             className="sidebar-button logout-button"
+            tooltip={isSidebarCollapsed ? "Logout" : null}
+            tooltipOptions={isSidebarCollapsed ? { position: 'right' } : null}
           />
         </div>
       </div>
 
-      <div className="main-content">
+      <div className={`main-content ${isSidebarCollapsed ? 'expanded' : ''}`}>
         <div className="documents-header">
           <div className="header-left">
             <h2>Create New Civil Case</h2>
@@ -178,14 +242,19 @@ const CreateCase = () => {
             </div>
 
             <div className="form-field">
-            <label>NATURE</label>
-            <Dropdown 
-            value={selectedNature} 
-              onChange={(e) => {setSelectedNature(e.value);  
-              handleNatureChange(e, 'nature')}} 
-              options={natures} optionLabel="name" 
-              placeholder="Select a Nature" 
-              className="natureofcase" required/>               
+              <label>NATURE</label>
+              <Dropdown 
+                value={selectedNature} 
+                onChange={(e) => {
+                  setSelectedNature(e.value);  
+                  handleNatureChange(e, 'nature');
+                }} 
+                options={natures} 
+                optionLabel="name" 
+                placeholder="Select a Nature" 
+                className="natureofcase" 
+                required
+              />               
             </div>
 
             <div className="form-field">
@@ -206,7 +275,6 @@ const CreateCase = () => {
                 onChange={(e) => handleDateChange(e.value, 'preTrialPreliminary')}
                 dateFormat="yy-mm-dd"
                 showIcon
-
               />
             </div>
 
@@ -217,7 +285,6 @@ const CreateCase = () => {
                 onChange={(e) => handleDateChange(e.value, 'dateOfInitialTrial')}
                 dateFormat="yy-mm-dd"
                 showIcon
-
               />
             </div>
 
@@ -237,7 +304,6 @@ const CreateCase = () => {
                 onChange={(e) => handleDateChange(e.value, 'dateSubmittedForDecision')}
                 dateFormat="yy-mm-dd"
                 showIcon
-
               />
             </div>
 

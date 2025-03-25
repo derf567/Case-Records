@@ -10,46 +10,67 @@ import logo_cr from './assets/Logo.png';
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const toast = useRef(null);
 
-  const showReminder = (message, severity = "warn") => {
-    toast.current.show({ severity, summary: "Reminder", detail: message, life: 3000 });
+  const showToast = (message, severity = "warn", summary = "Reminder") => {
+    toast.current.show({ 
+      severity, 
+      summary, 
+      detail: message, 
+      life: 3000 
+    });
   };
 
   const handleLogin = async () => {
     try {
       if (!email) {
-        showReminder("Please enter your email");
+        showToast("Please enter your email");
         return;
       }
       if (!password) {
-        showReminder("Please enter your password");
+        showToast("Please enter your password");
         return;
       }
 
+      setLoading(true);
       const result = await loginUser(email, password);
       
-      if (result && result.isAdmin) {
-        navigate("/caserecords");
-      } else {
-        navigate("/caserecords");
-      }
+      // Show success message
+      showToast("Login successful! Redirecting to dashboard...", "success", "Success");
+      
+      // Add a small delay to show the success message before redirecting
+      setTimeout(() => {
+        if (result && result.isAdmin) {
+          navigate("/caserecords");
+        } else {
+          navigate("/caserecords");
+        }
+      }, 1500);
+      
     } catch (error) {
+      setLoading(false);
       if (error.code === 'auth/user-not-found') {
-        showReminder("User not found. Please check your email.", "error");
+        showToast("User not found. Please check your email.", "error", "Error");
       } else if (error.code === 'auth/wrong-password') {
-        showReminder("Incorrect password. Please try again.", "error");
+        showToast("Incorrect password. Please try again.", "error", "Error");
       } else {
-        showReminder("Login failed. Please try again.", "error");
+        showToast("Login failed. Please try again.", "error", "Error");
       }
+    }
+  };
+
+  // Handle Enter key press for login
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleLogin();
     }
   };
 
   return (
     <div className="login-container">
-      <Toast ref={toast} />
+      <Toast ref={toast} position="top-center" />
       <div className="login-form">
         <div className="logo">
           <img src={logo_cr} alt="logo" />
@@ -60,6 +81,7 @@ const Login = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)} 
             placeholder="Enter email or admin username"
+            onKeyPress={handleKeyPress}
           />
         </div>
         <div className="input">Password
@@ -68,6 +90,7 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)} 
             placeholder="Enter password"
+            onKeyPress={handleKeyPress}
           />
         </div>
         <div className="rf-container">
@@ -80,9 +103,11 @@ const Login = () => {
           </div>
         </div>
         <Button
-          label="Login"
+          label={loading ? "Logging in..." : "Login"}
           onClick={handleLogin}
           className="login-button"
+          disabled={loading}
+          icon={loading ? "pi pi-spin pi-spinner" : ""}
         />
         <div>
           <a href="/register" className="register-link">Create a user account</a>

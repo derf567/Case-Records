@@ -1,106 +1,236 @@
-/* Dashboard.css */
+/* Complete updated CSS for CaseRecords.css */
+
 .dashboard-container {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #f8f9fa;
+  position: relative; /* Ensure proper positioning context */
+}
+
+.dashboard-container.sidebar-collapsed {
+  padding-left: 70px; /* Adjust padding when sidebar is collapsed */
 }
 
 .sidebar {
-  width: 280px;
-  background-color: #22303E;
+  background: linear-gradient(to bottom, #1565c0, #0d47a1);
+  color: white;
+  width: 260px;
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  position: fixed; /* Fixed position to prevent layout issues */
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 100;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* Allow scrolling if content is too tall */
 }
 
 .sidebar.collapsed {
-  width: 80px;
+  width: 70px;
 }
 
-.sidebar-header {
-  padding: 0;
-  margin: 0;
-  width: 100%;
+/* User welcome section with hamburger button */
+.user-welcome {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  padding: 1.5rem 1rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+  position: relative; /* For positioning the hamburger button */
+}
+
+.sidebar.collapsed .user-welcome {
   justify-content: center;
+  padding: 1.5rem 0.5rem;
+  flex-direction: column;
 }
-.logo-image {
-  width: 100%;
-  height: auto;
+
+.user-avatar {
+  width: 3rem !important;
+  height: 3rem !important;
+  font-size: 1.2rem !important;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+}
+
+.welcome-text {
+  margin-left: 0.75rem;
+  transition: opacity 0.3s ease;
+  flex: 1;
+}
+
+.welcome-text span {
   display: block;
-  margin: 0;
-  padding: 0;
-  object-fit: cover;
-  max-width: none; /* Remove max-width constraint */
+  font-size: 0.85rem;
+  opacity: 0.8;
 }
 
-.sidebar.collapsed .logo-image {
-  max-width: 50px;
+.welcome-text h3 {
+  margin: 0.2rem 0 0 0;
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
-.toggle-button {
-  background: transparent !important;
-  border: none !important;
+.hamburger-button {
   color: white !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  width: 2.2rem !important;
+  height: 2.2rem !important;
+  margin-left: auto; /* Push to the right */
+}
+
+.sidebar.collapsed .hamburger-button {
+  margin-left: 0;
+  margin-top: 1rem;
+}
+
+.hamburger-button:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.sidebar-divider {
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin: 0 1rem 1rem 1rem;
+}
+
+.sidebar.collapsed .sidebar-divider {
+  margin: 0 0.5rem 1rem 0.5rem;
 }
 
 .sidebar-content {
   display: flex;
   flex-direction: column;
-  padding: 1rem;
-  gap: 1rem;
+  padding: 0 0.75rem;
+  flex: 1;
+  justify-content: flex-start; /* Ensure items start from the top */
+  margin-bottom: 80px; /* Make room for the logout button */
 }
 
 .sidebar-button {
-  width: 100%;
-  justify-content: flex-start !important;
+  margin-bottom: 0.5rem;
+  text-align: left;
   background-color: transparent !important;
-  border: 1px solid white !important;
+  border: none !important;
   color: white !important;
+  transition: all 0.3s;
+  border-radius: 8px !important;
+  padding: 0.75rem 1rem !important;
+  display: flex !important;
+  align-items: center !important;
 }
 
 .sidebar-button:hover {
   background-color: rgba(255, 255, 255, 0.1) !important;
+  transform: translateX(5px);
 }
 
+.sidebar-button.active {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  font-weight: 600;
+}
+
+.sidebar-button .p-button-icon {
+  font-size: 1.1rem !important;
+}
+
+.sidebar-button .p-button-label {
+  margin-left: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.sidebar.collapsed .sidebar-button {
+  justify-content: center !important;
+  padding: 0.75rem !important;
+}
+
+.sidebar.collapsed .sidebar-button .p-button-label {
+  display: none;
+}
+
+.sidebar.collapsed .sidebar-button:hover {
+  transform: translateX(0);
+}
+
+/* Fixed logout button positioning */
 .logout-button {
-  margin-top: 600px;
-  background-color: transparent !important;
-  border-color: white !important;
-  
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  margin: 0 0.75rem;
+  background-color: rgba(255, 0, 0, 0.1) !important;
 }
 
+.sidebar.collapsed .logout-button {
+  width: calc(70px - 1.5rem);
+  margin: 0 0.75rem;
+  justify-content: center !important;
+}
+
+.logout-button:hover {
+  background-color: rgba(255, 0, 0, 0.2) !important;
+}
+
+/* Main content area */
 .main-content {
   flex: 1;
-  padding: 2rem;
-  background-color: #f8f9fa;
+  padding: 1.5rem;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+  margin-left: 260px; /* Match the sidebar width */
+  width: calc(100% - 260px); /* Ensure it takes remaining width */
+}
+
+.main-content.expanded {
+  margin-left: 70px; /* Match the collapsed sidebar width */
+  width: calc(100% - 70px);
+}
+
+.documents-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+}
+
+.header-left h2 {
+  margin: 0;
+  font-size: 1.75rem;
+  color: #333;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap; /* Allow buttons to wrap */
 }
 
 .card {
   background: white;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  overflow-x: auto; /* Allow horizontal scrolling for wide tables */
 }
 
+/* Make the datatable responsive */
 .custom-data-table {
   width: 100%;
+  overflow-x: auto;
 }
 
-
-
-
-
-
-
-
-
-
-/* Status indicator styles */
+/* Status dot styling */
 .status-indicator {
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  position: relative;
 }
 
 .status-dot {
@@ -110,135 +240,136 @@
   display: inline-block;
 }
 
-.status-dot.green { background-color: green; }
-.status-dot.yellow { background-color: yellow; }
-.status-dot.red { background-color: red; }
-.status-dot.gray { background-color: gray; }
-
-/* Tooltip styles */
-.status-indicator:hover::after {
-  content: attr(data-status);
-  position: absolute;
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  white-space: nowrap;
-  z-index: 1000;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
+.status-dot.green {
+  background-color: #4caf50;
 }
 
-
-
-
-/* Add to your existing Dashboard.css */
-.p-datatable .p-datatable-tbody > tr.p-highlight {
-  background: rgba(33, 150, 243, 0.1);
+.status-dot.yellow {
+  background-color: #ff9800;
 }
 
-.p-datatable .p-checkbox .p-checkbox-box.p-highlight {
-  border-color: #2196F3;
-  background: #2196F3;
+.status-dot.red {
+  background-color: #f44336;
 }
 
-.p-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.status-dot.gray {
+  background-color: #9e9e9e;
 }
 
-.p-toast {
-  z-index: 1000;
+/* Reminders styling */
+.reminder-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
+.reminder-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
 
+.reminder-item:last-child {
+  border-bottom: none;
+}
 
+.reminder-icon {
+  color: #ff5722;
+  margin-right: 0.75rem;
+  font-size: 1.1rem;
+}
 
+.reminder-content {
+  display: flex;
+  flex-direction: column;
+}
 
+.reminder-days {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 0.2rem;
+}
 
+/* Add case button styling */
+.add-case-btn {
+  margin-left: 1rem;
+  background-color: #2196F3 !important;
+  border-color: #2196F3 !important;
+}
 
-/* Responsive Design */
-@media screen and (max-width: 768px) {
+.add-case-btn:hover {
+  background-color: #1976D2 !important;
+  border-color: #1976D2 !important;
+}
+
+/* Custom data table styling */
+.custom-data-table .p-datatable-thead > tr > th {
+  background-color: #f8f9fa;
+  color: #495057;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+}
+
+.custom-data-table .p-datatable-tbody > tr {
+  transition: background-color 0.2s;
+}
+
+.custom-data-table .p-datatable-tbody > tr:hover {
+  background-color: #f1f5f9;
+}
+
+.custom-data-table .p-datatable-tbody > tr > td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
   .sidebar {
-    width: 80px;
+    position: fixed;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: 1000;
   }
-
-  .sidebar .logo-image {
-    max-width: 50px;
+  
+  .sidebar.collapsed {
+    left: -70px;
   }
-
-  .sidebar-button .p-button-label {
-    display: none;
-  }
-
+  
   .main-content {
+    margin-left: 0;
+    width: 100%;
     padding: 1rem;
   }
-  .documents-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    padding: 1rem;
-    background: white;
-    border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-  .header-left h2 {
-    margin: 0;
-    font-size: 1.25rem;
-    color: #1c2834;
+  
+  .main-content.expanded {
+    margin-left: 0;
+    width: 100%;
   }
   
   .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    flex-wrap: wrap;
   }
   
-  .p-button-text {
-    color: #6c757d !important;
-    padding: 0.5rem !important;
-  }
-  
-  .p-button-text:hover {
-    background: rgba(0, 0, 0, 0.04) !important;
-  }
-  
-  .add-case-btn {
-    background: #0d6efd !important;
-    border: none !important;
-    color: white !important;
-    margin-left: 0.5rem !important;
-  }
-  
-  .add-case-btn:hover {
-    background: #0b5ed7 !important;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .sidebar {
-    position: fixed;
-    z-index: 1000;
-    height: 100vh;
-  }
-
-  .main-content {
-    margin-left: 80px;
-  }
   .documents-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+  }
+  
+  .header-left {
+    margin-bottom: 1rem;
   }
   
   .header-actions {
     width: 100%;
-    justify-content: flex-end;
-    flex-wrap: wrap;
+    justify-content: space-between;
   }
-
+  
+  .add-case-btn {
+    margin-left: 0;
+    margin-top: 0.5rem;
+    width: 100%;
+  }
 }
