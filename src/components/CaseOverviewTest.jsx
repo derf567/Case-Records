@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../firebase/authService";
 import './css/CaseOverview.css';
 import logo_sq from './assets/LogoSquare.png';
-import { Divider } from 'primereact/divider';
+import { Card } from 'primereact/card';
 
 
 const CaseOverviewTest = () => {
@@ -58,6 +58,14 @@ const CaseOverviewTest = () => {
               onClick={() => navigate('/caserecords')}
             />
           </div>
+          <div className="card">
+            <Card title="Civil Case No:">
+                <p className="m-0">
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae 
+                    numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse, cupiditate neque quas!
+                </p>
+            </Card>
+        </div>
         </div>
 
 
