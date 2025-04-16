@@ -243,6 +243,16 @@ const Dashboard = () => {
               <p>Urgent (≤ 3 days)</p>
             </div>
           </Card>
+
+          <Card className="stats-card">
+            <div className="stats-icon neutral">
+              <i className="pi pi-clock"></i>
+            </div>
+            <div className="stats-info">
+              {/*<h3>{caseStats.urgent}</h3>*/}
+              <p>Overdue</p>
+            </div>
+          </Card>
           
           <Card className="stats-card">
             <div className="stats-icon resolved">

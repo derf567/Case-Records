@@ -4,6 +4,7 @@ import Register from "./components/Register";
 import Dashboard from './components/DashBoard';
 import CaseRecords from "./components/CaseRecords";
 import CreateCase from './components/CreateCase';
+import EditCase from './components/EditCase';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 import Settings from './components/Settings';
@@ -21,6 +22,7 @@ const App = () => {
         <Route path="/caserecords" element={<CaseRecords />} />
         <Route path="/caseoverview" element={<CaseOverview />} />
         <Route path="/create-case" element={<CreateCase />} />
+        <Route path="/edit-case" element={<EditCase />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/case-overview/:id" element={<CaseOverview />} />
       </Routes>

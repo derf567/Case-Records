@@ -248,6 +248,10 @@
   background-color: #F44336;
 }
 
+.stats-icon.neutral {
+  background-color: #818181;
+}
+
 .stats-icon.resolved {
   background-color: #4CAF50;
 }
