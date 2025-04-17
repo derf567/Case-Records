@@ -22,7 +22,7 @@ const App = () => {
         <Route path="/caserecords" element={<CaseRecords />} />
         <Route path="/caseoverview" element={<CaseOverview />} />
         <Route path="/create-case" element={<CreateCase />} />
-        <Route path="/edit-case" element={<EditCase />} />
+        <Route path="/edit-case/:id" element={<EditCase />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/case-overview/:id" element={<CaseOverview />} />
       </Routes>
