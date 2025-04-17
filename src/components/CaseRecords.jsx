@@ -335,7 +335,7 @@ const CaseRecords = () => {
               icon="pi pi-pencil" 
               className="p-button-text"
               tooltip="Edit"
-              onClick={handleEdit}
+              onClick={() => selectedCases.length === 1 && navigate(`/edit-case/${selectedCases[0].id}`)}
               disabled={selectedCases.length !== 1}
             />
             <Button 
