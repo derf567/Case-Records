@@ -4,13 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, deleteDoc} from 'firebase/firestore';
 import { db } from '../firebase/firebase-config';
 import { Toast } from 'primereact/toast';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { Avatar } from 'primereact/avatar';
 import { getAuth } from 'firebase/auth';
+import { writeBatch, serverTimestamp } from "firebase/firestore";
 import './css/CaseRecords.css';
 
 const CaseRecords = () => {
@@ -55,14 +56,17 @@ const CaseRecords = () => {
     const fetchCases = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, 'CaseFile'));
-        const casesList = querySnapshot.docs.map(doc => ({ 
+        const allCases = querySnapshot.docs.map(doc => ({ 
           id: doc.id, 
           ...doc.data() 
         }));
-        setCases(casesList);
+        
+        // Filter out resolved cases
+        const activeCases = allCases.filter(caseItem => caseItem.status !== 'Resolved');
+        setCases(activeCases);
         
         // Check for due dates and show reminders
-        checkDueDates(casesList);
+        checkDueDates(activeCases);
       } catch (error) {
         console.error('Error fetching cases: ', error);
       }
@@ -160,7 +164,7 @@ const CaseRecords = () => {
       });
       return;
     }
-
+  
     confirmDialog({
       message: `Are you sure you want to delete ${selectedCases.length} selected case(s)?`,
       header: 'Confirm Delete',
@@ -168,7 +172,6 @@ const CaseRecords = () => {
       accept: () => deleteSelectedCases()
     });
   };
-
   const deleteSelectedCases = async () => {
     try {
       await Promise.all(
@@ -199,6 +202,70 @@ const CaseRecords = () => {
       });
     }
   };
+
+  const handleMarkAsDone = () => {
+    if (selectedCases.length === 0) {
+      toast.current.show({
+        severity: 'warn',
+        summary: 'Warning',
+        detail: 'Please select cases to mark as done',
+        life: 3000
+      });
+      return;
+    }
+  
+    confirmDialog({
+      message: `Are you sure you want to mark ${selectedCases.length} selected case(s) as done?`,
+      header: 'Confirm Action',
+      icon: 'pi pi-check-circle',
+      accept: () => markCasesAsDone()
+    });
+  };  
+  
+  const markCasesAsDone = async () => {
+    try {
+      const batch = writeBatch(db);
+      const today = serverTimestamp(); // Using server timestamp for consistency
+  
+      selectedCases.forEach(caseItem => {
+        const caseRef = doc(db, 'CaseFile', caseItem.id);
+        batch.update(caseRef, {
+          status: 'Resolved',
+          dateSubmittedForDecision: today,
+          lastUpdated: today
+        });
+      });
+  
+      await batch.commit();
+  
+      // Update local state
+      setCases(prevCases => 
+        prevCases.filter(c => !selectedCases.some(s => s.id === c.id))
+      );
+      setSelectedCases([]);
+  
+      toast.current.show({
+        severity: 'success',
+        summary: 'Success',
+        detail: `${selectedCases.length} case(s) marked as resolved`,
+        life: 5000
+      });
+    } catch (error) {
+      console.error('Case resolution error:', {
+        error: error.message,
+        stack: error.stack,
+        cases: selectedCases.map(c => c.id)
+      });
+  
+      toast.current.show({
+        severity: 'error',
+        summary: 'Operation Failed',
+        detail: `Error: ${error.message}`,
+        life: 7000
+      });
+    }
+  };
+  
 
   const handleCreateCase = () => {
     navigate("/create-case");
@@ -295,6 +362,14 @@ const CaseRecords = () => {
             tooltip={isSidebarCollapsed ? "Settings" : null}
             tooltipOptions={isSidebarCollapsed ? { position: 'right' } : null}
           />
+          <Button
+            label={isSidebarCollapsed ? "" : "Resolved Cases"}
+            icon="pi pi-check-square"
+            onClick={() => navigate('/resolved-cases')}
+            className="sidebar-button"
+            tooltip={isSidebarCollapsed ? "Resolved Cases" : null}
+            tooltipOptions={isSidebarCollapsed ? { position: 'right' } : null}
+          />
         </div>
         
         {/* Fixed position logout button */}
@@ -343,7 +418,7 @@ const CaseRecords = () => {
               className="p-button-text"
               tooltip="Delete"
               onClick={handleDelete}
-              disabled={selectedCases.length === 0}
+              //disabled={selectedCases.length === 0}  // This line needs to be removed
             />
             <Button 
               icon="pi pi-filter" 
@@ -351,9 +426,11 @@ const CaseRecords = () => {
               tooltip="Filters"
             />
             <Button 
-              icon="pi pi-download" 
+              icon="pi pi-check-circle" 
               className="p-button-text"
-              tooltip="Export"
+              tooltip="Mark as Done"
+              onClick={handleMarkAsDone}
+              disabled={selectedCases.length === 0}
             />
             <Button 
               label="Add new case"

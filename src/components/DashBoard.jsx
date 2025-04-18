@@ -20,6 +20,7 @@ const Dashboard = () => {
     total: 0,
     upcoming: 0,
     urgent: 0,
+    overdue: 0, // Added overdue property
     resolved: 0
   });
   const toast = useRef(null);
@@ -53,57 +54,60 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    const fetchCases = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'CaseFile'));
-        const casesList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setCases(casesList);
-        
-        // Calculate statistics
-        calculateCaseStats(casesList);
-        
-      } catch (error) {
-        console.error('Error fetching cases: ', error);
-        if (toast.current) {
-          toast.current.show({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to fetch case data',
-            life: 3000
-          });
-        }
-      }
-    };
-
+// Modify the fetchCases function in CaseRecords.jsx
+  const fetchCases = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'CaseFile'));
+      const allCases = querySnapshot.docs.map(doc => ({ 
+        id: doc.id, 
+        ...doc.data() 
+      }));
+      
+      // Store all cases for statistics calculation
+      calculateCaseStats(allCases);
+      
+      // Filter out resolved cases for display purposes only
+      const activeCases = allCases.filter(caseItem => caseItem.status !== 'Resolved');
+      setCases(activeCases);
+      
+      // Check for due dates and show reminders
+      checkDueDates(activeCases);
+    } catch (error) {
+      console.error('Error fetching cases: ', error);
+    }
+  };
     fetchCases();
   }, []);
 
-  const calculateCaseStats = (casesList) => {
-    const stats = {
-      total: casesList.length,
-      upcoming: 0,
-      urgent: 0,
-      resolved: 0
-    };
-
-    casesList.forEach(caseItem => {
-      const daysRemaining = getDaysRemaining(caseItem.preTrialPreliminary);
-      if (daysRemaining !== null) {
-        if (daysRemaining <= 3 && daysRemaining > 0) {
-          stats.urgent++;
-        } else if (daysRemaining > 3) {
-          stats.upcoming++;
-        }
-      }
-      
-      // Consider cases as resolved if they have a submission date for decision
-      if (caseItem.dateSubmittedForDecision) {
-        stats.resolved++;
-      }
-    });
-
-    setCaseStats(stats);
+const calculateCaseStats = (casesList) => {
+  const stats = {
+    urgent: 0,
+    upcoming: 0,
+    overdue: 0,
+    resolved: 0,
+    total: casesList.length // Add total count here
   };
+  
+  casesList.forEach(caseItem => {
+    const daysRemaining = getDaysRemaining(caseItem.preTrialPreliminary);
+    if (daysRemaining !== null) {
+      if (daysRemaining <= 3 && daysRemaining > 0) {
+        stats.urgent++;
+      } else if (daysRemaining > 3) {
+        stats.upcoming++;
+      } else if (daysRemaining < 0) {
+        stats.overdue++;
+      }
+    }
+    
+    // Only count cases explicitly marked as resolved
+    if (caseItem.status === 'Resolved') {
+      stats.resolved++;
+    }
+  });
+  
+  setCaseStats(stats);
+};
 
   const getDaysRemaining = (preTrialDate) => {
     if (!preTrialDate) return null;
@@ -191,6 +195,14 @@ const Dashboard = () => {
             tooltip={isSidebarCollapsed ? "Settings" : null}
             tooltipOptions={isSidebarCollapsed ? { position: 'right' } : null}
           />
+          <Button
+            label={isSidebarCollapsed ? "" : "Resolved Cases"}
+            icon="pi pi-check-square"
+            onClick={() => navigate('/resolved-cases')}
+            className="sidebar-button"
+            tooltip={isSidebarCollapsed ? "Resolved Cases" : null}
+            tooltipOptions={isSidebarCollapsed ? { position: 'right' } : null}
+          />
         </div>
         
         {/* Fixed position logout button */}
@@ -249,7 +261,7 @@ const Dashboard = () => {
               <i className="pi pi-clock"></i>
             </div>
             <div className="stats-info">
-              {/*<h3>{caseStats.urgent}</h3>*/}
+              <h3>{caseStats.overdue}</h3>
               <p>Overdue</p>
             </div>
           </Card>
@@ -322,6 +334,115 @@ const Dashboard = () => {
                 <div className="no-data">
                   <i className="pi pi-check-circle" style={{ fontSize: '2rem', color: '#4caf50' }}></i>
                   <p>No upcoming deadlines at this time</p>
+                </div>
+              )}
+            </div>
+          </Card>
+          
+          {/* Overdue Cases Section - New Addition */}
+          <Card className="deadlines-card overdue-card">
+            <div className="card-header">
+              <h3>Overdue Cases</h3>
+              <Button 
+                label="View All Cases" 
+                icon="pi pi-arrow-right" 
+                className="p-button-text p-button-sm" 
+                onClick={viewAllCases} 
+              />
+            </div>
+            
+            <div className="reminders-container">
+              {cases.length > 0 ? (
+                cases
+                  .filter(caseItem => {
+                    const daysRemaining = getDaysRemaining(caseItem.preTrialPreliminary);
+                    return daysRemaining !== null && daysRemaining < 0;
+                  })
+                  .sort((a, b) => getDaysRemaining(a.preTrialPreliminary) - getDaysRemaining(b.preTrialPreliminary))
+                  .slice(0, 5) // Show only the 5 most overdue cases
+                  .map((caseItem, index) => {
+                    const daysRemaining = getDaysRemaining(caseItem.preTrialPreliminary);
+                    
+                    return (
+                      <div key={index} className="reminder-card overdue">
+                        <div className="reminder-header">
+                          <h4>{caseItem.title}</h4>
+                          <span className="days-remaining overdue-text">{Math.abs(daysRemaining)} days overdue</span>
+                        </div>
+                        <p className="case-nature">{caseItem.nature}</p>
+                        <p className="case-number">{caseItem.civilCaseNo}</p>
+                        <ProgressBar 
+                          value={100} 
+                          showValue={false} 
+                          className="urgency-progress overdue"
+                        />
+                      </div>
+                    );
+                  })
+              ) : (
+                <div className="no-data">
+                  <i className="pi pi-calendar-times" style={{ fontSize: '2rem', color: '#ccc' }}></i>
+                  <p>No overdue cases</p>
+                </div>
+              )}
+              
+              {cases.length > 0 && 
+               !cases.some(caseItem => {
+                 const daysRemaining = getDaysRemaining(caseItem.preTrialPreliminary);
+                 return daysRemaining !== null && daysRemaining < 0;
+               }) && (
+                <div className="no-data">
+                  <i className="pi pi-check-circle" style={{ fontSize: '2rem', color: '#4caf50' }}></i>
+                  <p>No overdue cases at this time</p>
+                </div>
+              )}
+            </div>
+          </Card>
+
+          {/* Resolved Cases Section */}
+          <Card className="deadlines-card resolved-card">
+            <div className="card-header">
+              <h3>Resolved Cases</h3>
+              <Button 
+                label="View All Cases" 
+                icon="pi pi-arrow-right" 
+                className="p-button-text p-button-sm" 
+                onClick={viewAllCases} 
+              />
+            </div>
+            
+            <div className="reminders-container">
+              {cases.length > 0 ? (
+                cases
+                  .filter(caseItem => caseItem.dateSubmittedForDecision || caseItem.status === 'Resolved')
+                  .slice(0, 5) // Show only the 5 most recently resolved cases
+                  .map((caseItem, index) => (
+                    <div key={index} className="reminder-card resolved">
+                      <div className="reminder-header">
+                        <h4>{caseItem.title}</h4>
+                        <span className="days-remaining resolved-text">Resolved</span>
+                      </div>
+                      <p className="case-nature">{caseItem.nature}</p>
+                      <p className="case-number">{caseItem.civilCaseNo}</p>
+                      <ProgressBar 
+                        value={100} 
+                        showValue={false} 
+                        className="urgency-progress resolved"
+                      />
+                    </div>
+                  ))
+              ) : (
+                <div className="no-data">
+                  <i className="pi pi-calendar-times" style={{ fontSize: '2rem', color: '#ccc' }}></i>
+                  <p>No resolved cases</p>
+                </div>
+              )}
+              
+              {cases.length > 0 && 
+              !cases.some(caseItem => caseItem.dateSubmittedForDecision || caseItem.status === 'Resolved') && (
+                <div className="no-data">
+                  <i className="pi pi-exclamation-circle" style={{ fontSize: '2rem', color: '#ff9800' }}></i>
+                  <p>No resolved cases at this time</p>
                 </div>
               )}
             </div>
