@@ -70,8 +70,6 @@ const Dashboard = () => {
       const activeCases = allCases.filter(caseItem => caseItem.status !== 'Resolved');
       setCases(activeCases);
       
-      // Check for due dates and show reminders
-      checkDueDates(activeCases);
     } catch (error) {
       console.error('Error fetching cases: ', error);
     }
