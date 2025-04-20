@@ -6,6 +6,9 @@ import { Toast } from 'primereact/toast'; // Import Toast component
 import './css/Register.css';
 import logo_cr from './assets/Logo.png';
 import { Dialog } from 'primereact/dialog';
+import { doc, setDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { db } from '../firebase/firebase-config';
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -30,6 +33,8 @@ const Register = () => {
 
     try {
       await registerUser(email, password);
+      await assignUserRole();
+
       toast.current.show({ severity: 'success', summary: 'Success', detail: 'Registration successful', life: 3000 });
       setVisible(true);      
       setTimeout(() => {navigate("/");}, 3000) // Redirect to login after successful registration
@@ -38,6 +43,17 @@ const Register = () => {
     }
   };
 
+  
+  const assignUserRole = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+  
+    if (user) {
+      const userRef = doc(db, 'User', user.uid);
+      await setDoc(userRef, { role: 'clerk' }, { merge: true });
+      console.log('Role assigned');
+    }
+  };
   return (
     <div className="register-container">
       <Toast ref={toast} /> {/* Add the Toast component here */}
