@@ -1,7 +1,8 @@
 import { auth, db } from "./firebase-config";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "firebase/auth";
 import { setDoc, doc, getDoc } from "firebase/firestore";
 
+// Register user
 export const registerUser = async (email, password) => {
   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
   const user = userCredential.user;
@@ -12,6 +13,7 @@ export const registerUser = async (email, password) => {
   return user;
 };
 
+// Login user
 export const loginUser = async (email, password) => {
   try {
     console.log("Login attempt initiated for:", email);
@@ -38,7 +40,7 @@ export const loginUser = async (email, password) => {
       throw new Error("Invalid admin credentials");
     }
     
-    // Regular user login remains the same
+    // Regular user login
     console.log("Attempting regular user login");
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     return { user: userCredential.user, isAdmin: false };
@@ -49,6 +51,12 @@ export const loginUser = async (email, password) => {
   }
 };
 
+// Logout user
 export const logoutUser = () => {
   return signOut(auth);
+};
+
+// Forgot password
+export const resetPassword = async (email) => {
+  await sendPasswordResetEmail(auth, email);
 };
