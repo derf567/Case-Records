@@ -21,6 +21,7 @@ const CaseRecords = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [reminders, setReminders] = useState([]);
   const [userName, setUserName] = useState('');
+  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' or 'desc'
   const toast = useRef(null);
   const op = useRef(null);
 
@@ -29,6 +30,22 @@ const CaseRecords = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
 
+  const sortCasesByDeadline = (order) => {
+    const sortedCases = [...cases].sort((a, b) => {
+      const dateA = a.preTrialPreliminary ? new Date(a.preTrialPreliminary) : new Date(8640000000000000); // Distant future if no date
+      const dateB = b.preTrialPreliminary ? new Date(b.preTrialPreliminary) : new Date(8640000000000000);
+      
+      if (order === 'asc') {
+        return dateA - dateB;
+      } else {
+        return dateB - dateA;
+      }
+    });
+  
+    setCases(sortedCases);
+    setSortOrder(order);
+  };
+  
   // Get current user's information
   useEffect(() => {
     const auth = getAuth();
@@ -420,11 +437,20 @@ const CaseRecords = () => {
               onClick={handleDelete}
               //disabled={selectedCases.length === 0}  // This line needs to be removed
             />
+
             <Button 
-              icon="pi pi-filter" 
+              icon="pi pi-sort-amount-up-alt" 
               className="p-button-text"
-              tooltip="Filters"
+              tooltip="Sort: Soonest First"
+              onClick={() => sortCasesByDeadline('asc')}
             />
+            <Button 
+              icon="pi pi-sort-amount-down" 
+              className="p-button-text"
+              tooltip="Sort: Latest First"
+              onClick={() => sortCasesByDeadline('desc')}
+            />
+
             <Button 
               icon="pi pi-check-circle" 
               className="p-button-text"
