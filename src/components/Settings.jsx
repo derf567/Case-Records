@@ -3,32 +3,34 @@ import { Button } from 'primereact/button';
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../firebase/authService";
 import { Avatar } from 'primereact/avatar';
-import { getAuth } from 'firebase/auth';
+import { getAuth, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
+import { Toast } from 'primereact/toast';
 import './css/Settings.css';
 
 const Settings = () => {
   const navigate = useNavigate();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [userName, setUserName] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+  const toast = React.useRef(null);
 
-  // Toggle sidebar function
   const toggleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
 
-  // Get current user's information
   useEffect(() => {
     const auth = getAuth();
     const user = auth.currentUser;
     
     if (user) {
-      // Use displayName if available, otherwise use email or 'User'
       const displayName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
       setUserName(displayName);
     }
   }, []);
 
-  // Function to get user initials for avatar
   const getUserInitials = () => {
     if (!userName) return 'U';
     
@@ -44,11 +46,63 @@ const Settings = () => {
     navigate("/");
   };
 
+  const verifyCurrentPassword = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!currentPassword) {
+      showToast('Please enter your current password.', 'warn');
+      return;
+    }
+
+    const credential = EmailAuthProvider.credential(user.email, currentPassword);
+
+    try {
+      setLoading(true);
+      await reauthenticateWithCredential(user, credential);
+      setIsVerified(true);
+      showToast('Password verified successfully!', 'success');
+    } catch (error) {
+      console.error('Error verifying password:', error);
+      showToast('Incorrect current password.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChangePassword = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!newPassword || newPassword.length < 6) {
+      showToast('New password must be at least 6 characters.', 'warn');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await updatePassword(user, newPassword);
+      showToast('Password updated successfully!', 'success');
+      setNewPassword('');
+      setCurrentPassword('');
+      setIsVerified(false); // Reset after change
+    } catch (error) {
+      console.error('Error updating password:', error);
+      showToast('Failed to update password. Please re-login and try again.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const showToast = (message, severity = "info") => {
+    toast.current.show({ severity, summary: severity.toUpperCase(), detail: message, life: 3000 });
+  };
+
   return (
     <div className="dashboard-container">
-      {/* Sidebar with welcome message and toggle button */}
+      <Toast ref={toast} position="top-center" />
+
       <div className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}>
-        {/* User Welcome Section with Toggle Button */}
         <div className="user-welcome">
           <Avatar 
             label={getUserInitials()} 
@@ -116,13 +170,54 @@ const Settings = () => {
             <h2>Settings</h2>
           </div>
           <div className="header-actions">
-            {/* Add any settings-related actions here */}
+            {/* Settings-related actions if needed */}
           </div>
         </div>
 
         <div className="card">
-          {/* Add settings content here */}
-          <p>Settings content will go here.</p>
+          <h3>Change Password</h3>
+
+          {/* Current Password Verification */}
+          {!isVerified && (
+            <div className="input-group">
+              <input
+                type="password"
+                placeholder="Enter current password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                className="password-input"
+              />
+              <Button
+                label={loading ? "Verifying..." : "Verify Password"}
+                icon={loading ? "pi pi-spin pi-spinner" : "pi pi-check"}
+                onClick={verifyCurrentPassword}
+                className="verify-password-button"
+                disabled={loading}
+              />
+            </div>
+          )}
+
+          {/* New Password Input */}
+          {isVerified && (
+            <>
+              <div className="input-group">
+                <input
+                  type="password"
+                  placeholder="Enter new password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="password-input"
+                />
+              </div>
+              <Button
+                label={loading ? "Updating..." : "Update Password"}
+                icon={loading ? "pi pi-spin pi-spinner" : "pi pi-key"}
+                onClick={handleChangePassword}
+                className="update-password-button"
+                disabled={loading}
+              />
+            </>
+          )}
         </div>
       </div>
     </div>
