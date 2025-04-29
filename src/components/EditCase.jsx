@@ -103,7 +103,7 @@ const EditCase = () => {
   };
 
   // for dropdown NATURE
-  const [setSelectedNature] = useState(null);
+  const [selectedNature, setSelectedNature] = useState(null);
   const natures = [
     { name: 'Accion Publiciana/Ejectment' },
     { name: 'Quieting of Title/Reconveyance of Property' },

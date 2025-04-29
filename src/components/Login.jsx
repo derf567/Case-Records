@@ -110,7 +110,7 @@ const Login = () => {
           icon={loading ? "pi pi-spin pi-spinner" : ""}
         />
         <div>
-          <a href="/register" className="register-link">Create a user account</a>
+          <a href="/Register" className="register-link">Create a user account</a>
         </div>
       </div>
     </div>
