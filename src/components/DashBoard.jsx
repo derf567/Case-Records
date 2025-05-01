@@ -9,10 +9,12 @@ import { getAuth } from 'firebase/auth';
 import { Card } from 'primereact/card';
 import { ProgressBar } from 'primereact/progressbar';
 import { Toast } from 'primereact/toast';
+import { useAdmin } from '../firebase/AdminContext';
 import './css/Dashboard.css';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { isAdmin } = useAdmin();
   const [cases, setCases] = useState([]);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [userName, setUserName] = useState('');
@@ -20,32 +22,28 @@ const Dashboard = () => {
     total: 0,
     upcoming: 0,
     urgent: 0,
-    overdue: 0, // Added overdue property
+    overdue: 0,
     resolved: 0
   });
   const toast = useRef(null);
 
-  // Toggle sidebar function
-  const toggleSidebar = () => {
-    setIsSidebarCollapsed(!isSidebarCollapsed);
-  };
-
-  // Get current user's information
   useEffect(() => {
     const auth = getAuth();
     const user = auth.currentUser;
-    
+
     if (user) {
-      // Use displayName if available, otherwise use email or 'User'
       const displayName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
       setUserName(displayName);
     }
   }, []);
 
-  // Function to get user initials for avatar
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
   const getUserInitials = () => {
     if (!userName) return 'U';
-    
+
     const names = userName.split(' ');
     if (names.length > 1) {
       return `${names[0][0]}${names[1][0]}`.toUpperCase();
@@ -54,58 +52,53 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-// Modify the fetchCases function in CaseRecords.jsx
-  const fetchCases = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(db, 'CaseFile'));
-      const allCases = querySnapshot.docs.map(doc => ({ 
-        id: doc.id, 
-        ...doc.data() 
-      }));
-      
-      // Store all cases for statistics calculation
-      calculateCaseStats(allCases);
-      
-      // Filter out resolved cases for display purposes only
-      const activeCases = allCases.filter(caseItem => caseItem.status !== 'Resolved');
-      setCases(activeCases);
-      
-    } catch (error) {
-      console.error('Error fetching cases: ', error);
-    }
-  };
+    const fetchCases = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'CaseFile'));
+        const allCases = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        calculateCaseStats(allCases);
+
+        const activeCases = allCases.filter(caseItem => caseItem.status !== 'Resolved');
+        setCases(activeCases);
+      } catch (error) {
+        console.error('Error fetching cases: ', error);
+      }
+    };
     fetchCases();
   }, []);
 
-const calculateCaseStats = (casesList) => {
-  const stats = {
-    urgent: 0,
-    upcoming: 0,
-    overdue: 0,
-    resolved: 0,
-    total: casesList.length // Add total count here
-  };
-  
-  casesList.forEach(caseItem => {
-    const daysRemaining = getDaysRemaining(caseItem.preTrialPreliminary);
-    if (daysRemaining !== null) {
-      if (daysRemaining <= 3 && daysRemaining > 0) {
-        stats.urgent++;
-      } else if (daysRemaining > 3) {
-        stats.upcoming++;
-      } else if (daysRemaining < 0) {
-        stats.overdue++;
+  const calculateCaseStats = (casesList) => {
+    const stats = {
+      urgent: 0,
+      upcoming: 0,
+      overdue: 0,
+      resolved: 0,
+      total: casesList.length
+    };
+
+    casesList.forEach(caseItem => {
+      const daysRemaining = getDaysRemaining(caseItem.preTrialPreliminary);
+      if (daysRemaining !== null) {
+        if (daysRemaining <= 3 && daysRemaining > 0) {
+          stats.urgent++;
+        } else if (daysRemaining > 3) {
+          stats.upcoming++;
+        } else if (daysRemaining < 0) {
+          stats.overdue++;
+        }
       }
-    }
-    
-    // Only count cases explicitly marked as resolved
-    if (caseItem.status === 'Resolved') {
-      stats.resolved++;
-    }
-  });
-  
-  setCaseStats(stats);
-};
+
+      if (caseItem.status === 'Resolved') {
+        stats.resolved++;
+      }
+    });
+
+    setCaseStats(stats);
+  };
 
   const getDaysRemaining = (preTrialDate) => {
     if (!preTrialDate) return null;
@@ -137,37 +130,35 @@ const calculateCaseStats = (casesList) => {
   };
 
   return (
-    <div className="dashboard-container">
+    <div className={`dashboard-container ${isSidebarCollapsed ? "sidebar-collapsed" : ""}`}>
       <Toast ref={toast} />
-      
-      {/* Sidebar with welcome message and toggle button */}
+
       <div className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}>
-        {/* User Welcome Section with Toggle Button */}
         <div className="user-welcome">
-          <Avatar 
-            label={getUserInitials()} 
-            shape="circle" 
+          <Avatar
+            label={getUserInitials()}
+            shape="circle"
             className="user-avatar"
             style={{ backgroundColor: '#2196F3', color: '#ffffff' }}
           />
-          
+
           {!isSidebarCollapsed && (
             <div className="welcome-text">
               <span>Welcome,</span>
               <h3>{userName}</h3>
             </div>
           )}
-          
-          <Button 
-            icon={isSidebarCollapsed ? "pi pi-bars" : "pi pi-times"} 
+
+          <Button
+            icon={isSidebarCollapsed ? "pi pi-bars" : "pi pi-times"}
             className="p-button-rounded p-button-text hamburger-button"
             onClick={toggleSidebar}
             aria-label="Toggle Menu"
           />
         </div>
-        
+
         <div className="sidebar-divider"></div>
-        
+
         <div className="sidebar-content">
           <Button
             label={isSidebarCollapsed ? "" : "Dashboard"}
@@ -185,6 +176,18 @@ const calculateCaseStats = (casesList) => {
             tooltip={isSidebarCollapsed ? "Case Records" : null}
             tooltipOptions={isSidebarCollapsed ? { position: 'right' } : null}
           />
+
+          {isAdmin && (
+            <Button
+              label={isSidebarCollapsed ? "" : "User Approvals"}
+              icon="pi pi-users"
+              onClick={() => navigate("/user-approvals")}
+              className="sidebar-button"
+              tooltip={isSidebarCollapsed ? "User Approvals" : null}
+              tooltipOptions={isSidebarCollapsed ? { position: "right" } : null}
+            />
+          )}
+
           <Button
             label={isSidebarCollapsed ? "" : "Settings"}
             icon="pi pi-cog"
@@ -202,8 +205,7 @@ const calculateCaseStats = (casesList) => {
             tooltipOptions={isSidebarCollapsed ? { position: 'right' } : null}
           />
         </div>
-        
-        {/* Fixed position logout button */}
+
         <Button
           label={isSidebarCollapsed ? "" : "Logout"}
           icon="pi pi-sign-out"
@@ -233,7 +235,7 @@ const calculateCaseStats = (casesList) => {
               <p>Total Cases</p>
             </div>
           </Card>
-          
+
           <Card className="stats-card">
             <div className="stats-icon upcoming">
               <i className="pi pi-calendar"></i>
@@ -243,7 +245,7 @@ const calculateCaseStats = (casesList) => {
               <p>Upcoming Hearings</p>
             </div>
           </Card>
-          
+
           <Card className="stats-card">
             <div className="stats-icon urgent">
               <i className="pi pi-exclamation-circle"></i>
@@ -263,7 +265,7 @@ const calculateCaseStats = (casesList) => {
               <p>Overdue</p>
             </div>
           </Card>
-          
+
           <Card className="stats-card">
             <div className="stats-icon resolved">
               <i className="pi pi-check-circle"></i>
@@ -280,14 +282,14 @@ const calculateCaseStats = (casesList) => {
           <Card className="deadlines-card">
             <div className="card-header">
               <h3>Upcoming Deadlines</h3>
-              <Button 
-                label="View All Cases" 
-                icon="pi pi-arrow-right" 
-                className="p-button-text p-button-sm" 
-                onClick={viewAllCases} 
+              <Button
+                label="View All Cases"
+                icon="pi pi-arrow-right"
+                className="p-button-text p-button-sm"
+                onClick={viewAllCases}
               />
             </div>
-            
+
             <div className="reminders-container">
               {cases.length > 0 ? (
                 cases
@@ -296,11 +298,11 @@ const calculateCaseStats = (casesList) => {
                     return daysRemaining !== null && daysRemaining > 0;
                   })
                   .sort((a, b) => getDaysRemaining(a.preTrialPreliminary) - getDaysRemaining(b.preTrialPreliminary))
-                  .slice(0, 5) // Show only the 5 most urgent cases
+                  .slice(0, 5)
                   .map((caseItem, index) => {
                     const daysRemaining = getDaysRemaining(caseItem.preTrialPreliminary);
                     const urgencyClass = daysRemaining <= 3 ? 'urgent' : daysRemaining <= 7 ? 'moderate' : 'normal';
-                    
+
                     return (
                       <div key={index} className={`reminder-card ${urgencyClass}`}>
                         <div className="reminder-header">
@@ -309,9 +311,9 @@ const calculateCaseStats = (casesList) => {
                         </div>
                         <p className="case-nature">{caseItem.nature}</p>
                         <p className="case-number">{caseItem.civilCaseNo}</p>
-                        <ProgressBar 
-                          value={Math.min(100, 100 - (daysRemaining / 30 * 100))} 
-                          showValue={false} 
+                        <ProgressBar
+                          value={Math.min(100, 100 - (daysRemaining / 30 * 100))}
+                          showValue={false}
                           className={`urgency-progress ${urgencyClass}`}
                         />
                       </div>
@@ -323,32 +325,32 @@ const calculateCaseStats = (casesList) => {
                   <p>No upcoming deadlines</p>
                 </div>
               )}
-              
-              {cases.length > 0 && 
-               !cases.some(caseItem => {
-                 const daysRemaining = getDaysRemaining(caseItem.preTrialPreliminary);
-                 return daysRemaining !== null && daysRemaining > 0;
-               }) && (
-                <div className="no-data">
-                  <i className="pi pi-check-circle" style={{ fontSize: '2rem', color: '#4caf50' }}></i>
-                  <p>No upcoming deadlines at this time</p>
-                </div>
-              )}
+
+              {cases.length > 0 &&
+                !cases.some(caseItem => {
+                  const daysRemaining = getDaysRemaining(caseItem.preTrialPreliminary);
+                  return daysRemaining !== null && daysRemaining > 0;
+                }) && (
+                  <div className="no-data">
+                    <i className="pi pi-check-circle" style={{ fontSize: '2rem', color: '#4caf50' }}></i>
+                    <p>No upcoming deadlines at this time</p>
+                  </div>
+                )}
             </div>
           </Card>
-          
-          {/* Overdue Cases Section - New Addition */}
+
+          {/* Overdue Cases Section */}
           <Card className="deadlines-card overdue-card">
             <div className="card-header">
               <h3>Overdue Cases</h3>
-              <Button 
-                label="View All Cases" 
-                icon="pi pi-arrow-right" 
-                className="p-button-text p-button-sm" 
-                onClick={viewAllCases} 
+              <Button
+                label="View All Cases"
+                icon="pi pi-arrow-right"
+                className="p-button-text p-button-sm"
+                onClick={viewAllCases}
               />
             </div>
-            
+
             <div className="reminders-container">
               {cases.length > 0 ? (
                 cases
@@ -357,10 +359,10 @@ const calculateCaseStats = (casesList) => {
                     return daysRemaining !== null && daysRemaining < 0;
                   })
                   .sort((a, b) => getDaysRemaining(a.preTrialPreliminary) - getDaysRemaining(b.preTrialPreliminary))
-                  .slice(0, 5) // Show only the 5 most overdue cases
+                  .slice(0, 5)
                   .map((caseItem, index) => {
                     const daysRemaining = getDaysRemaining(caseItem.preTrialPreliminary);
-                    
+
                     return (
                       <div key={index} className="reminder-card overdue">
                         <div className="reminder-header">
@@ -369,9 +371,9 @@ const calculateCaseStats = (casesList) => {
                         </div>
                         <p className="case-nature">{caseItem.nature}</p>
                         <p className="case-number">{caseItem.civilCaseNo}</p>
-                        <ProgressBar 
-                          value={100} 
-                          showValue={false} 
+                        <ProgressBar
+                          value={100}
+                          showValue={false}
                           className="urgency-progress overdue"
                         />
                       </div>
@@ -383,17 +385,17 @@ const calculateCaseStats = (casesList) => {
                   <p>No overdue cases</p>
                 </div>
               )}
-              
-              {cases.length > 0 && 
-               !cases.some(caseItem => {
-                 const daysRemaining = getDaysRemaining(caseItem.preTrialPreliminary);
-                 return daysRemaining !== null && daysRemaining < 0;
-               }) && (
-                <div className="no-data">
-                  <i className="pi pi-check-circle" style={{ fontSize: '2rem', color: '#4caf50' }}></i>
-                  <p>No overdue cases at this time</p>
-                </div>
-              )}
+
+              {cases.length > 0 &&
+                !cases.some(caseItem => {
+                  const daysRemaining = getDaysRemaining(caseItem.preTrialPreliminary);
+                  return daysRemaining !== null && daysRemaining < 0;
+                }) && (
+                  <div className="no-data">
+                    <i className="pi pi-check-circle" style={{ fontSize: '2rem', color: '#4caf50' }}></i>
+                    <p>No overdue cases at this time</p>
+                  </div>
+                )}
             </div>
           </Card>
 
@@ -401,19 +403,19 @@ const calculateCaseStats = (casesList) => {
           <Card className="deadlines-card resolved-card">
             <div className="card-header">
               <h3>Resolved Cases</h3>
-              <Button 
-                label="View All Cases" 
-                icon="pi pi-arrow-right" 
-                className="p-button-text p-button-sm" 
-                onClick={viewAllCases} 
+              <Button
+                label="View All Cases"
+                icon="pi pi-arrow-right"
+                className="p-button-text p-button-sm"
+                onClick={viewAllCases}
               />
             </div>
-            
+
             <div className="reminders-container">
               {cases.length > 0 ? (
                 cases
                   .filter(caseItem => caseItem.dateSubmittedForDecision || caseItem.status === 'Resolved')
-                  .slice(0, 5) // Show only the 5 most recently resolved cases
+                  .slice(0, 5)
                   .map((caseItem, index) => (
                     <div key={index} className="reminder-card resolved">
                       <div className="reminder-header">
@@ -422,9 +424,9 @@ const calculateCaseStats = (casesList) => {
                       </div>
                       <p className="case-nature">{caseItem.nature}</p>
                       <p className="case-number">{caseItem.civilCaseNo}</p>
-                      <ProgressBar 
-                        value={100} 
-                        showValue={false} 
+                      <ProgressBar
+                        value={100}
+                        showValue={false}
                         className="urgency-progress resolved"
                       />
                     </div>
@@ -435,17 +437,17 @@ const calculateCaseStats = (casesList) => {
                   <p>No resolved cases</p>
                 </div>
               )}
-              
-              {cases.length > 0 && 
-              !cases.some(caseItem => caseItem.dateSubmittedForDecision || caseItem.status === 'Resolved') && (
-                <div className="no-data">
-                  <i className="pi pi-exclamation-circle" style={{ fontSize: '2rem', color: '#ff9800' }}></i>
-                  <p>No resolved cases at this time</p>
-                </div>
-              )}
+
+              {cases.length > 0 &&
+                !cases.some(caseItem => caseItem.dateSubmittedForDecision || caseItem.status === 'Resolved') && (
+                  <div className="no-data">
+                    <i className="pi pi-exclamation-circle" style={{ fontSize: '2rem', color: '#ff9800' }}></i>
+                    <p>No resolved cases at this time</p>
+                  </div>
+                )}
             </div>
           </Card>
-          
+
           {/* Recent Activity Card */}
           <Card className="activity-card">
             <div className="card-header">
@@ -455,10 +457,9 @@ const calculateCaseStats = (casesList) => {
               {cases.length > 0 ? (
                 cases
                   .sort((a, b) => {
-                    // Sort by creation date if available, otherwise by ID
                     const dateA = a.createdAt ? new Date(a.createdAt) : null;
                     const dateB = b.createdAt ? new Date(b.createdAt) : null;
-                    
+
                     if (dateA && dateB) return dateB - dateA;
                     if (dateA) return -1;
                     if (dateB) return 1;

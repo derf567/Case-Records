@@ -9,7 +9,7 @@ const HomePage = () => {
   const handleLogout = () => {
     signOut(auth).then(() => {
       console.log("User logged out");
-      navigate("/login");  // Redirect to login page after logout
+      navigate("/");  // Redirect to login page after logout
     }).catch((error) => {
       console.error(error.message);
     });

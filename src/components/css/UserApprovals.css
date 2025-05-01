@@ -1,0 +1,39 @@
+/* css/UserApprovals.css */
+.user-status {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.user-status.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.user-status.approved {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.user-status.rejected {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .header-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .header-actions .p-button {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}

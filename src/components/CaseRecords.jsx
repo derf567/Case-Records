@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { collection, getDocs, doc, deleteDoc} from 'firebase/firestore';
+import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase-config';
 import { Toast } from 'primereact/toast';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
@@ -12,53 +12,50 @@ import { OverlayPanel } from 'primereact/overlaypanel';
 import { Avatar } from 'primereact/avatar';
 import { getAuth } from 'firebase/auth';
 import { writeBatch, serverTimestamp } from "firebase/firestore";
+import { useAdmin } from '../firebase/AdminContext'; // Assuming you have this hook
 import './css/CaseRecords.css';
 
 const CaseRecords = () => {
   const navigate = useNavigate();
+  const { isAdmin } = useAdmin(); // Use the hook to get admin status
   const [cases, setCases] = useState([]);
   const [selectedCases, setSelectedCases] = useState([]);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [reminders, setReminders] = useState([]);
   const [userName, setUserName] = useState('');
-  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' or 'desc'
+  const [sortOrder, setSortOrder] = useState('asc');
   const toast = useRef(null);
   const op = useRef(null);
 
-  // Toggle sidebar function
-  const toggleSidebar = () => {
-    setIsSidebarCollapsed(!isSidebarCollapsed);
-  };
-
-  const sortCasesByDeadline = (order) => {
-    const sortedCases = [...cases].sort((a, b) => {
-      const dateA = a.preTrialPreliminary ? new Date(a.preTrialPreliminary) : new Date(8640000000000000); // Distant future if no date
-      const dateB = b.preTrialPreliminary ? new Date(b.preTrialPreliminary) : new Date(8640000000000000);
-      
-      if (order === 'asc') {
-        return dateA - dateB;
-      } else {
-        return dateB - dateA;
-      }
-    });
-  
-    setCases(sortedCases);
-    setSortOrder(order);
-  };
-  
-  // Get current user's information
   useEffect(() => {
     const auth = getAuth();
     const user = auth.currentUser;
     
     if (user) {
-      // Use displayName if available, otherwise use email or 'User'
       const displayName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
       setUserName(displayName);
     }
   }, []);
 
-  // Function to get user initials for avatar
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      navigate("/");
+    } catch (error) {
+      console.error("Error during logout:", error);
+      toast.current.show({
+        severity: 'error',
+        summary: 'Logout Failed',
+        detail: 'An error occurred while logging out. Please try again.',
+        life: 3000
+      });
+    }
+  };
+
   const getUserInitials = () => {
     if (!userName) return 'U';
     
@@ -77,12 +74,9 @@ const CaseRecords = () => {
           id: doc.id, 
           ...doc.data() 
         }));
-        
-        // Filter out resolved cases
+
         const activeCases = allCases.filter(caseItem => caseItem.status !== 'Resolved');
         setCases(activeCases);
-        
-        // Check for due dates and show reminders
         checkDueDates(activeCases);
       } catch (error) {
         console.error('Error fetching cases: ', error);
@@ -92,7 +86,6 @@ const CaseRecords = () => {
     fetchCases();
   }, []);
 
-  // Function to check for cases with due dates and show reminders
   const checkDueDates = (casesList) => {
     const remindersList = casesList.filter(caseItem => {
       const daysRemaining = getDaysRemaining(caseItem.preTrialPreliminary);
@@ -101,7 +94,6 @@ const CaseRecords = () => {
     setReminders(remindersList);
   };
 
-  // Calculate the number of days remaining from the pre-trial date
   const getDaysRemaining = (preTrialDate) => {
     if (!preTrialDate) return null;
     const today = new Date();
@@ -110,7 +102,6 @@ const CaseRecords = () => {
     return Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
   };
 
-  // Determine the status color based on days remaining
   const getStatusColor = (preTrialDate) => {
     const daysRemaining = getDaysRemaining(preTrialDate);
     if (daysRemaining === null) return 'gray';
@@ -120,7 +111,6 @@ const CaseRecords = () => {
     return 'gray';
   };
 
-  // Status body template for the DataTable
   const statusBodyTemplate = (rowData) => {
     const statusColor = getStatusColor(rowData.preTrialPreliminary);
     const daysRemaining = getDaysRemaining(rowData.preTrialPreliminary);
@@ -137,7 +127,22 @@ const CaseRecords = () => {
     );
   };
 
-  // Date formatter function
+  const sortCasesByDeadline = (order) => {
+    const sortedCases = [...cases].sort((a, b) => {
+      const dateA = a.preTrialPreliminary ? new Date(a.preTrialPreliminary) : new Date(8640000000000000); // Distant future if no date
+      const dateB = b.preTrialPreliminary ? new Date(b.preTrialPreliminary) : new Date(8640000000000000);
+  
+      if (order === 'asc') {
+        return dateA - dateB;
+      } else {
+        return dateB - dateA;
+      }
+    });
+  
+    setCases(sortedCases);
+    setSortOrder(order);
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return '';
     try {
@@ -153,7 +158,6 @@ const CaseRecords = () => {
     }
   };
 
-  // Template for date columns
   const dateTemplate = (rowData, field) => {
     return formatDate(rowData[field]);
   };
@@ -189,6 +193,7 @@ const CaseRecords = () => {
       accept: () => deleteSelectedCases()
     });
   };
+
   const deleteSelectedCases = async () => {
     try {
       await Promise.all(
@@ -242,8 +247,8 @@ const CaseRecords = () => {
   const markCasesAsDone = async () => {
     try {
       const batch = writeBatch(db);
-      const today = serverTimestamp(); // Using server timestamp for consistency
-  
+      const today = serverTimestamp();
+
       selectedCases.forEach(caseItem => {
         const caseRef = doc(db, 'CaseFile', caseItem.id);
         batch.update(caseRef, {
@@ -252,15 +257,14 @@ const CaseRecords = () => {
           lastUpdated: today
         });
       });
-  
+
       await batch.commit();
-  
-      // Update local state
+
       setCases(prevCases => 
         prevCases.filter(c => !selectedCases.some(s => s.id === c.id))
       );
       setSelectedCases([]);
-  
+
       toast.current.show({
         severity: 'success',
         summary: 'Success',
@@ -273,7 +277,7 @@ const CaseRecords = () => {
         stack: error.stack,
         cases: selectedCases.map(c => c.id)
       });
-  
+
       toast.current.show({
         severity: 'error',
         summary: 'Operation Failed',
@@ -282,30 +286,13 @@ const CaseRecords = () => {
       });
     }
   };
-  
 
   const handleCreateCase = () => {
     navigate("/create-case");
   };
 
-  // Function to toggle the reminders overlay panel
   const toggleReminders = (event) => {
     op.current.toggle(event);
-  };
-
-  const handleLogout = async () => {
-    try {
-      await logoutUser();
-      navigate("/");
-    } catch (error) {
-      console.error("Error during logout:", error);
-      toast.current.show({
-        severity: 'error',
-        summary: 'Logout Failed',
-        detail: 'An error occurred while logging out. Please try again.',
-        life: 3000
-      });
-    }
   };
 
   useEffect(() => {
@@ -328,7 +315,6 @@ const CaseRecords = () => {
 
       {/* Fixed Sidebar */}
       <div className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}>
-        {/* User Welcome Section with Toggle Button */}
         <div className="user-welcome">
           <Avatar 
             label={getUserInitials()} 
@@ -371,6 +357,18 @@ const CaseRecords = () => {
             tooltip={isSidebarCollapsed ? "Case Records" : null}
             tooltipOptions={isSidebarCollapsed ? { position: 'right' } : null}
           />
+          
+          {isAdmin && (
+            <Button
+              label={isSidebarCollapsed ? "" : "User Approvals"}
+              icon="pi pi-users"
+              onClick={() => navigate('/user-approvals')}
+              className="sidebar-button"
+              tooltip={isSidebarCollapsed ? "User Approvals" : null}
+              tooltipOptions={isSidebarCollapsed ? { position: 'right' } : null}
+            />
+          )}
+
           <Button
             label={isSidebarCollapsed ? "" : "Settings"}
             icon="pi pi-cog"
@@ -389,7 +387,6 @@ const CaseRecords = () => {
           />
         </div>
         
-        {/* Fixed position logout button */}
         <Button
           label={isSidebarCollapsed ? "" : "Logout"}
           icon="pi pi-sign-out"
@@ -435,7 +432,6 @@ const CaseRecords = () => {
               className="p-button-text"
               tooltip="Delete"
               onClick={handleDelete}
-              //disabled={selectedCases.length === 0}  // This line needs to be removed
             />
 
             <Button 

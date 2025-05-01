@@ -1,26 +1,19 @@
-// Create a new component: ProtectedAdminRoute.js
-import { Navigate } from 'react-router-dom';
+import { Navigate } from "react-router-dom"
+import { useAdmin } from "./AdminContext"
 
 const ProtectedAdminRoute = ({ children }) => {
-  // Add your admin authentication check logic here
-  const isAdmin = true;
-  
-  if (!isAdmin) {
-    return <Navigate to="/login" />;
+  const { isAdmin, isLoading } = useAdmin()
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return <div>Loading...</div>
   }
 
-  return children;
-};
+  if (!isAdmin) {
+    return <Navigate to="/login" />
+  }
 
-// In your routing setup (App.js or similar):
-import ProtectedAdminRoute from './components/ProtectedAdminRoute';
+  return children
+}
 
-// ... in your routes configuration:
-<Route 
-  path="/admin-dashboard" 
-  element={
-    <ProtectedAdminRoute>
-      <AdminDashboard />
-    </ProtectedAdminRoute>
-  } 
-/>
+export default ProtectedAdminRoute
